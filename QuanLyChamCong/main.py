@@ -1,12 +1,14 @@
 from tkinter import *
+from tkinter import ttk
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from customtkinter import *
-import time
+import time, face_recognition, cv2 
 import capCheck
-import cv2
 import numpy as np
-import face_recognition
+import TrangChuGUI, DangKyGUI, QuanLyGUI, ThongKeGUI # import các giao diện
+
+
 def canGiuaCuaSo(window,width,height):
     window.resizable(width=False,height=False)
     screen_width=window.winfo_screenwidth()
@@ -28,14 +30,16 @@ def clock(frame):
     clock_label.pack(anchor="w")
     update_clock()
 
-def login_window():
+
+
+def Login_Window():
     login_window = Tk()
     login_window.title("Đăng nhập")
 
     window_width=900
 
     window_height=600
-    canGiuaCuaSo(login_window,window_width,window_height)
+    #canGiuaCuaSo(login_window,window_width,window_height)
     
     # frame đăng nhập trái và frame hình ảnh nền phải
     left_frame=Frame(login_window,bg="white",width=window_width*0.5,height=window_height)
@@ -88,19 +92,20 @@ def login_window():
     def dangNhap(event):
         loginAccess("Đăng Nhập")
     def loginAccess(text):
+        global stop_clock
         if (text=="Đăng Nhập"):
             username = user_text.get()
             password = pass_text.get()
             if ( username=="admin" and password=="admin"):
                 messagebox.showinfo("Thông báo","Đăng nhập thành công ^^")
-                login_window.destroy()
-                main_window()
+                login_window.withdraw()
+                Main_Window(login_window)
             else:
                 messagebox.showerror("Lỗi", "Tên đăng nhập hoặc mật khẩu không đúng!")
         elif(text=="Chấm Công"):
             capCheck.chuanBi()
             capCheck.runCam()
-            #messagebox.showinfo("Thông báo","Đây là giao diện chấm công")
+
     login_btn=CTkButton(left_frame_bot,text="Đăng Nhập",font=("Arial",18),corner_radius=32,fg_color="#4158D0",hover_color="light green",text_color="white",height=50,width=300,command=lambda: loginAccess("Đăng Nhập"))
     login_btn.pack(pady=40,padx=20)
 
@@ -109,17 +114,18 @@ def login_window():
 
     login_window.bind('<Return>', dangNhap)
     login_window.mainloop()
+   
 
 
 
-def main_window():
-
-    window = Tk()
+def Main_Window(login_window):
+    window = Toplevel(login_window)
     window.title("Quản Lý Chấm Công")
     window_width=1500
     window_height=900
     window.resizable(width=False,height=False)
     window.geometry(f"{window_width}x{window_height}")
+
     #canGiuaCuaSo(window,window_width,window_height)
 
     # frame tiêu đề top, frame navigation trái, frame nội dung phải
@@ -141,12 +147,11 @@ def main_window():
     label_tieude.pack(pady=10)
 
 
-    # frame giữa - trái là thanh điều hướng
-            # sự kiện ấn nút
+    # frame giữa - trái là MenuTask
     def EventButtonClick(event):
         if( event=="Đăng Xuất"):
-            window.destroy()
-            login_window()
+            window.withdraw()
+            login_window.deiconify()
         elif( event=="Trang Chủ"):
             giaoDienTrangChu()
         elif (event=="Nhân Viên Mới"):
@@ -155,136 +160,57 @@ def main_window():
             giaoDienQuanly()
         elif( event=="Thống Kê"):
             giaoDienThongKe()
-        
-
-            # tạo button trái điều hướng
+            # tạo button trái Task
     trangchu_btn=CTkButton(left_frame,text="Trang Chủ",width=200,height=60,command=lambda :EventButtonClick("Trang Chủ"))
     dangky_btn=CTkButton(left_frame,text="Nhân Viên Mới",width=200,height=60,command=lambda :EventButtonClick("Nhân Viên Mới"))
     qlnhanvien_btn=CTkButton(left_frame,text="Quản Lý Nhân Viên",width=200,height=60,command=lambda :EventButtonClick("Quản Lý Nhân Viên"))
     thongke_btn=CTkButton(left_frame,text="Thống Kê",width=200,height=60,command=lambda :EventButtonClick("Thống Kê"))
     dangxuat_btn=CTkButton(left_frame,text="Đăng Xuất",width=200,height=60,command=lambda :EventButtonClick("Đăng Xuất"))
     
+
+
     # Giao diện phải
     def giaoDienTrangChu():
         for widget in right_frame.winfo_children():
             widget.destroy()
-        right_frame.config(bg="red")
         right_frame.grid_propagate(False)
+        TrangChuGUI.TrangChuLayout(right_frame)
+
         
-        def giaoDienDangKy():
+    def giaoDienDangKy():
         # thông tin nhân viên + chụp hình + lưu
         for widget in right_frame.winfo_children():
             widget.destroy()
-        right_frame.config(bg="blue")
         right_frame.grid_propagate(False)
-        
-        left_frame_dk = Frame(right_frame, bg="pink",width=600,height=800)
-        right_frame_dk = Frame(right_frame, bg="orange",width=600,height=800)
-        left_frame_dk.grid(row=0,column=0,sticky="nsew")
-
-        right_frame_dk.grid(row=0,column=1,sticky="nsew")
-        right_frame.grid_columnconfigure(0, weight=1)
-        right_frame.grid_columnconfigure(1, weight=1)
-        right_frame.grid_rowconfigure(0, weight=1)
-
-        def showHinhAnh():
-            cap=cv2.VideoCapture(0)
-            dem=0
-            while True:
-                ret, frame= cap.read()
-                frame=cv2.resize(frame,(350,350))
-                img=cv2.flip(frame,1)
-                img1=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-                img3=ImageTk.PhotoImage(Image.fromarray(img1))
-                if  len(face_recognition.face_encodings(img1)) >0:
-                    dem+=1
-                    cv2.imwrite(f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/QuanLyChamCong/imgCheck/{nhapTen.get()}{dem}.png",frame)
-                    print("được")
-                label_hinhAnh.configure(image=img3,width=360,height=360)
-                right_frame_dk.update() 
-                if(dem==10):
-                    break
-
-            cap.release()
-            cv2.destroyAllWindows()
-    
-        # nhập tên, chụp ảnh
-        label_Khung=LabelFrame(right_frame_dk,bg="white",borderwidth=5)
-        label_Khung.pack(pady=29)
-        label_hinhAnh=Label(label_Khung, bg="light gray",text="",width=50,height=30)
-        label_hinhAnh.pack()
-        nhapTen=Entry(right_frame_dk,width=20, font=("arial", 15), borderwidth=3)
-        nhapTen.pack(pady=20)
-        btn_dangky=CTkButton(right_frame_dk,text="Chụp Ảnh",command=showHinhAnh,width=100,height=50)
-        btn_dangky.pack()
-
-        # left_frame_dk chứa các thành phần để nhập thông tin nhân viên
-        label_ten = Label(left_frame_dk, text="Họ tên", width=19, height=3, font=("Arial", 15))
-        label_ten.grid(row=0, column=0, pady=8)
-        text_ten = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
-        text_ten.grid(row=0, column=1)
-        label_ngaysinh = Label(left_frame_dk, text="Ngày sinh: ", width=19, height=3, font=("Arial", 15))
-        label_ngaysinh.grid(row=1,column=0, pady=8)
-        text_ngaysinh = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
-        text_ngaysinh.grid(row=1,column=1)
-        label_sdt = Label(left_frame_dk, text="Số điện thoại: ", width=19, height=3, font=("Arial", 15))
-        label_sdt.grid(row=2, column=0, pady=8)
-        text_sdt = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
-        text_sdt.grid(row=2, column=1)
-        label_gioitinh = Label(left_frame_dk, text="Giới tính: ", width=19, height=3, font=("Arial", 15))
-        label_gioitinh.grid(row=3,column=0, pady=8)
-        value_gioitinh = ["Nam", "Nữ"]
-        combobox_gioitinh = ttk.Combobox(left_frame_dk, values=value_gioitinh, font=("Arial", 15), state="readonly")
-        combobox_gioitinh["width"] = 19
-        combobox_gioitinh.grid(row=3, column=1)
-        label_chucvu = Label(left_frame_dk, text="Chức vụ: ", width=19, height=3, font=("Arial", 15))
-        label_chucvu.grid(row=4,column=0, pady=8)
-        value_chucvu = ["Quản lý", "Nhân viên", "Thực tập"]
-        combobox_chucvu = ttk.Combobox(left_frame_dk, values=value_chucvu, font=("Arial", 15), state="readonly")
-        combobox_chucvu["width"] = 19
-        combobox_chucvu.grid(row=4, column=1)
-        label_email = Label(left_frame_dk, text="Email: ", width=19, height=3, font=("Arial", 15))
-        label_email.grid(row=5, column=0, pady=8)
-        text_email = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
-        text_email.grid(row=5, column=1)
-
-
-        # hàm clear các textfield, combobox
-        def button_clear():
-            text_ten.delete(0, END)
-            text_ngaysinh.delete(0, END)
-            text_sdt.delete(0, END)
-            text_email.delete(0, END)
-            combobox_chucvu.set('')
-            combobox_gioitinh.set('')
-
-        button_lammoi = CTkButton(left_frame_dk, text="Làm mới", width=100, height=50, command=button_clear)
-        button_lammoi.grid(row=6, column=1, pady=52)
-        button_xacnhan = CTkButton(left_frame_dk, text="Xác nhận", width=100, height=50)
-        button_xacnhan.grid(row=6, column=2, pady=52)
+        DangKyGUI.DangKyLayout(right_frame)
 
     def giaoDienQuanly():
         right_frame.grid_propagate(False)
         for widget in right_frame.winfo_children():
             widget.destroy()
-        right_frame.config(bg="gray")
+
+        QuanLyGUI.QuanLyLayout(right_frame)
+
         
     def giaoDienThongKe():
         right_frame.grid_propagate(False)
         for widget in right_frame.winfo_children():
             widget.destroy()
-        # thống kê điểm danh của nhân viên riêng, tất cả nhân viên theo tháng
-        right_frame.config(bg="yellow")
+        ThongKeGUI.ThongKeLayout(right_frame)
         
+    def on_closing():
+        window.destroy()  # Đóng cửa sổ
+        login_window.destroy()
 
     trangchu_btn.pack(pady=10,padx=20)
     dangky_btn.pack(pady=10,padx=20)
     qlnhanvien_btn.pack(pady=10,padx=20)
     thongke_btn.pack(pady=10,padx=20)
     dangxuat_btn.pack(pady=50,padx=20)
+    window.protocol("WM_DELETE_WINDOW", on_closing)
     window.mainloop()
 
 
-login_window()
+Login_Window()
 
 
