@@ -36,10 +36,10 @@ def Login_Window():
     login_window = Tk()
     login_window.title("Đăng nhập")
 
-    window_width=900
+    window_width=1000
 
     window_height=600
-    #canGiuaCuaSo(login_window,window_width,window_height)
+    canGiuaCuaSo(login_window,window_width,window_height)
     
     # frame đăng nhập trái và frame hình ảnh nền phải
     left_frame=Frame(login_window,bg="white",width=window_width*0.5,height=window_height)
@@ -52,8 +52,8 @@ def Login_Window():
     login_window.grid_rowconfigure(0, weight=2)
 
     # right_frame với hình ảnh
-    login_pic=Image.open("QuanLyChamCong/img/login.png")
-    logic_pic_resized=login_pic.resize((450,600),Image.BICUBIC)
+    login_pic=Image.open("QuanLyChamCong/img/loginImage.png")
+    logic_pic_resized=login_pic.resize((int(window_width*0.5+80),window_height),Image.BICUBIC)
     new_pic=ImageTk.PhotoImage(logic_pic_resized)
     label_img=Label(right_frame,image=new_pic)
     label_img.pack()
@@ -76,11 +76,11 @@ def Login_Window():
 
     user_label=Label(left_frame_mid,text="Tài khoản:",font=("arial",14),bg="white")
     user_label.grid(row=1,column=0,padx=20,pady=30,sticky="w")
-    user_text=CTkEntry(left_frame_mid,font=("arial",14),width=300,height=40,fg_color="white",text_color="black",placeholder_text="Tên đăng nhập....",)
+    user_text=CTkEntry(left_frame_mid,font=("arial",14),width=280,height=40,fg_color="white",text_color="black",placeholder_text="Tên đăng nhập....",)
     user_text.grid(row=1,column=1)
     pass_label=Label(left_frame_mid,text="Mật khẩu:",font=("arial",14),bg="white")
     pass_label.grid(row=2,column=0,padx=20,pady=30,sticky="w")
-    pass_text=CTkEntry(left_frame_mid,show="*",font=("arial",14),width=300,height=40,fg_color="white",text_color="black",placeholder_text="Mật khẩu....")
+    pass_text=CTkEntry(left_frame_mid,show="*",font=("arial",14),width=280,height=40,fg_color="white",text_color="black",placeholder_text="Mật khẩu....")
     pass_text.grid(row=2,column=1)
 
 
@@ -109,7 +109,7 @@ def Login_Window():
     login_btn=CTkButton(left_frame_bot,text="Đăng Nhập",font=("Arial",18),corner_radius=32,fg_color="#4158D0",hover_color="light green",text_color="white",height=50,width=300,command=lambda: loginAccess("Đăng Nhập"))
     login_btn.pack(pady=40,padx=20)
 
-    diemdanh_btn=CTkButton(left_frame_bot,text="Chấm công",font=("Arial",18),corner_radius=32,fg_color="#4158D0",hover_color="light blue",text_color="white",height=50,width=300,command=lambda: loginAccess("Chấm Công"))
+    diemdanh_btn=CTkButton(left_frame_bot,text="Chấm công",font=("Arial",18),corner_radius=32,fg_color="#4158D0",hover_color="light blue",text_color="white",height=50,width=300,image=CTkImage(Image.open("QuanLyChamCong/img/camera.png"),size=(40,40)),command=lambda: loginAccess("Chấm Công"))
     diemdanh_btn.pack(pady=0,padx=20)
 
     login_window.bind('<Return>', dangNhap)
@@ -161,13 +161,16 @@ def Main_Window(login_window):
         elif( event=="Thống Kê"):
             giaoDienThongKe()
             # tạo button trái Task
-    trangchu_btn=CTkButton(left_frame,text="Trang Chủ",width=200,height=60,command=lambda :EventButtonClick("Trang Chủ"))
-    dangky_btn=CTkButton(left_frame,text="Nhân Viên Mới",width=200,height=60,command=lambda :EventButtonClick("Nhân Viên Mới"))
-    qlnhanvien_btn=CTkButton(left_frame,text="Quản Lý Nhân Viên",width=200,height=60,command=lambda :EventButtonClick("Quản Lý Nhân Viên"))
-    thongke_btn=CTkButton(left_frame,text="Thống Kê",width=200,height=60,command=lambda :EventButtonClick("Thống Kê"))
-    dangxuat_btn=CTkButton(left_frame,text="Đăng Xuất",width=200,height=60,command=lambda :EventButtonClick("Đăng Xuất"))
-    
-
+    trangchu_btn=CTkButton(left_frame,text="Trang Chủ",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/trangchu.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Trang Chủ"))
+    dangky_btn=CTkButton(left_frame,text="Nhân Viên Mới",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/thongtin.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Nhân Viên Mới"))
+    qlnhanvien_btn=CTkButton(left_frame,text="Quản Lý Nhân Viên",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/taikhoan.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Quản Lý Nhân Viên"))
+    thongke_btn=CTkButton(left_frame,text="Thống Kê",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/thongke.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Thống Kê"))
+    dangxuat_btn=CTkButton(left_frame,text="Đăng Xuất",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/dangxuat.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Đăng Xuất"))
+    trangchu_btn.pack(pady=10,padx=20)
+    dangky_btn.pack(pady=10,padx=20)
+    qlnhanvien_btn.pack(pady=10,padx=20)
+    thongke_btn.pack(pady=10,padx=20)
+    dangxuat_btn.pack(pady=50,padx=20)
 
     # Giao diện phải
     def giaoDienTrangChu():
@@ -202,11 +205,7 @@ def Main_Window(login_window):
         window.destroy()  # Đóng cửa sổ
         login_window.destroy()
 
-    trangchu_btn.pack(pady=10,padx=20)
-    dangky_btn.pack(pady=10,padx=20)
-    qlnhanvien_btn.pack(pady=10,padx=20)
-    thongke_btn.pack(pady=10,padx=20)
-    dangxuat_btn.pack(pady=50,padx=20)
+    giaoDienTrangChu()
     window.protocol("WM_DELETE_WINDOW", on_closing)
     window.mainloop()
 
