@@ -70,6 +70,7 @@ def diemDanh(name):
 def runCam():
     cap=cv2.VideoCapture(0)
     flag=False
+    success_count = 0
     while True:
         ret, frame= cap.read()
 
@@ -88,8 +89,10 @@ def runCam():
             if faceDis[matchIndex] < 0.5:
                 name=classNames[matchIndex]
                 diemDanh(name[:-1])
-                #flag=True
+                success_count += 1
                 print(f"Điểm danh thành công: {name}")
+                if success_count >= 10:
+                    flag=True
             else: name="Unknow"
             y1,x2,y2,x1=faceLocation
             y1,x2,y2,x1=y1*2,x2*2,y2*2,x1*2
