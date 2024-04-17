@@ -1,13 +1,16 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import messagebox, ttk
+import re
+import cv2
 import database_manager
-from customtkinter import *
-from tkinter import messagebox
-from PIL import ImageTk, Image
-import face_recognition, cv2 
+import face_recognition
 import numpy as np
+from customtkinter import *
+from PIL import Image, ImageTk
+
 
 def QuanLyLayout(right_frame):
+
     center_frame = LabelFrame(right_frame, background="white", width=600, height=750)
     center_frame.grid(row=0,column=0,sticky="nsew")
 
@@ -17,20 +20,10 @@ def QuanLyLayout(right_frame):
     '''right_frame.grid_columnconfigure(1, weight=1)
     right_frame.grid_columnconfigure(0, weight=2)
     right_frame.grid_rowconfigure(0, weight=1)'''
-
-
+    
     # right_frame_qly
-
-    '''style = ttk.Style()
-    style.theme_use("default")
-    style.configure("Treeview",
-                    background="#D3D3D3",
-                    foreground="black",
-                    rowheight=25,
-                    fieldbackground="#D3D3D3")
-
-    # Change selected color
-    style.map('Treeview', background=[('Selected', "lightblue")])'''
+    def btnTimKiem():
+        pass
 
     timKiem_frame = Frame(right_frame_qly, background="white")
     timKiem_frame.pack(pady=10)
@@ -41,10 +34,17 @@ def QuanLyLayout(right_frame):
     cb_timkiem.grid(row=0, column=1, padx=5, pady=10)
     text_timkiem = Entry(timKiem_frame)
     text_timkiem.grid(row=0, column=2, padx=5, pady=10)
-    button_tk = Button(timKiem_frame, text="Tìm kiếm") #, command=btnTimKiem)
+    button_tk = Button(timKiem_frame, text="Tìm kiếm", command=btnTimKiem)
     button_tk.grid(row=0, column=3, padx=5, pady=10)
     button_xemtatca = Button(timKiem_frame, text="Xem tất cả") #, command=btnXemTatca)
     button_xemtatca.grid(row=0, column=4, padx=0, pady=10)
+
+    style = ttk.Style()
+    style.theme_use("default")
+    style.configure("Treeview", rowheight=25)
+
+    # Change selected color
+    '''style.map('Treeview', background=[('Selected', "lightblue")])'''
 
     table_frame = Frame(right_frame_qly)
     table_frame.pack(pady=20)
@@ -78,8 +78,8 @@ def QuanLyLayout(right_frame):
     table.heading("Chức vụ", text="Chức vụ", anchor=CENTER)
     table.heading("Email", text="Email", anchor=CENTER)
 
-    '''table.tag_configure('oddrow', background="white")
-    table.tag_configure('evenrow', background="lightblue")'''
+    table.tag_configure('evenrow', background="white")
+    table.tag_configure('oddrow', background="lightblue")
 
     # center_frame
     info_frame = Frame(center_frame, background="white")
@@ -123,22 +123,106 @@ def QuanLyLayout(right_frame):
     lb_email.grid(row=7, column=0, pady=5)
     text_email = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
     text_email.grid(row=7, column=1, pady=5)
+
+    #img_record =   Image()
+
+    def select_record(e):
+        text_manv.delete(0, END)
+        text_ten.delete(0, END)
+        text_ngaysinh.delete(0, END)
+        text_sdt.delete(0, END)
+        text_email.delete(0, END)
+        cb_chucvu.set(' ')
+        cb_gioitinh.set(' ')
+
+        selected = table.focus()
+        values = table.item(selected, 'values')
+        text_manv.insert(0, values[0])
+        text_ten.insert(0, values[1])
+        text_ngaysinh.insert(0, values[2])
+        text_sdt.insert(0, values[3])
+        text_email.insert(0, values[6])
+        cb_gioitinh.set(values[4])
+        cb_chucvu.set(values[5])
+        #img_record = values[7]
+
+    def btnQuery():
+        dbManager = database_manager.DatabaseManager()
+        if dbManager.openConnection():
+            nhanvien = dbManager.selectAllNhanVien()
+            global count 
+            count = 0
+            for nv in nhanvien:
+                if count % 2 == 0:
+                    table.insert("", END, values=(nv[0], nv[1], nv[2], nv[3], nv[4], nv[5], nv[6]),
+                             tags=('oddrow',))
+                else:
+                    table.insert("", END, values=(nv[0], nv[1], nv[2], nv[3], nv[4], nv[5], nv[6]),
+                             tags=('evenrow',))
+                count += 1
+            dbManager.closeConnection()
+        else:
+            print("Kết nối thất bại!")
+
+    btnQuery()
+    table.bind("<ButtonRelease-1>", select_record)
+
+    def btnLamMoi():
+        text_manv.delete(0, END)
+        text_ten.delete(0, END)
+        text_ngaysinh.delete(0, END)
+        text_sdt.delete(0, END)
+        text_email.delete(0, END)
+        cb_chucvu.set(' ')
+        cb_gioitinh.set(' ')
+
+    ###
+    def btnCapNhat():
+        selected = table.focus()
+        if (selected==""):
+            messagebox.showinfo("Thông báo", "Vui lòng chọn nhân viên!")
+        else: 
+            table.item(selected, text="", values=(text_manv.get()))
+            manv = text_manv.get()
+            ten = text_ten.get()
+            ngaysinh = text_ngaysinh.get()
+            sdt = text_sdt.get()
+            gioitinh = cb_gioitinh.get()
+            chucvu = cb_chucvu.get()
+            email = text_email.get()
+
+            dbManager = database_manager.DatabaseManager()
+            if dbManager.openConnection():
+                dbManager.updateNhanVien(manv, ten, ngaysinh, sdt, gioitinh, chucvu, email)
+                dbManager.closeConnection()
+            else:
+                print("Kết nối thất bại!")
+            btnLamMoi()
+
+    def btnXoa():
+        pass
+
+
+    def btnXemAnh():
+        pass
+
     
-    button_capnhat = CTkButton(info_frame, text="Cập Nhật", corner_radius=30, border_width=2,
-                               border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15)) #, command=btnCapNhat
+    button_capnhat = CTkButton(info_frame, text="Cập nhật", corner_radius=30, border_width=2,
+                               border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnCapNhat )
     button_capnhat.grid(row=8, column=1)
     button_xoa = CTkButton(info_frame, text="Xoá", corner_radius=30, border_width=2,
-                           border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15)) #, command=btnXoa
+                           border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnXoa)
     button_xoa.grid(row=8, column=0, padx=10, pady=30)
 
     button_lammoi = CTkButton(info_frame, text="Làm mới", corner_radius=30, border_width=2,
-                               border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15)) #, command=btnLamMoi
+                               border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnLamMoi)
     button_lammoi.grid(row=9, column=0)
     button_xemanh = CTkButton(info_frame, text="Xem ảnh", corner_radius=30, border_width=2,
-                              border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15)) #, command=btnXemAnh)
+                              border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnXemAnh)
     button_xemanh.grid(row=9, column=1)
-
+    #
+    
+    
 
 
    
-    
