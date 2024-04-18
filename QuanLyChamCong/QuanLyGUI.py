@@ -11,21 +11,21 @@ from PIL import Image, ImageTk
 
 def QuanLyLayout(right_frame):
 
-    center_frame = LabelFrame(right_frame, background="white", width=600, height=750)
+    center_frame = LabelFrame(right_frame, background="white", width=500, height=750)
     center_frame.grid(row=0,column=0,sticky="nsew")
 
-    right_frame_qly = LabelFrame(right_frame, background='white', width=700, height=750)
+    right_frame_qly = LabelFrame(right_frame, background='white', width=800, height=750)
     right_frame_qly.grid(row=0,column=1,sticky="nsew")
 
-    '''right_frame.grid_columnconfigure(1, weight=1)
+    right_frame.grid_columnconfigure(1, weight=1)
     right_frame.grid_columnconfigure(0, weight=2)
-    right_frame.grid_rowconfigure(0, weight=1)'''
+    right_frame.grid_rowconfigure(0, weight=1)
     
     # right_frame_qly
     def btnTimKiem():
         pass
 
-    timKiem_frame = Frame(right_frame_qly, background="white")
+    timKiem_frame = Frame(right_frame_qly, background="white",width=800)
     timKiem_frame.pack(pady=10)
     lb_timkiem = Label(timKiem_frame, text="Tìm kiếm theo:", font=("Helvetica", 15), foreground="red", background="white")
     lb_timkiem.grid(row=0, column=0, padx= 5, pady=10)
@@ -46,7 +46,7 @@ def QuanLyLayout(right_frame):
     # Change selected color
     '''style.map('Treeview', background=[('Selected', "lightblue")])'''
 
-    table_frame = Frame(right_frame_qly)
+    table_frame = Frame(right_frame_qly,width=800)
     table_frame.pack(pady=20)
 
     tbscrolly = Scrollbar(table_frame)
@@ -61,13 +61,13 @@ def QuanLyLayout(right_frame):
 
     table['column'] = ("Mã nhân viên", "Họ tên", "Ngày sinh", "Số điện thoại", "Giới tính", "Chức vụ", "Email")
     table.column("#0", width=0, stretch=NO)
-    table.column("Mã nhân viên", anchor=CENTER, width=80)
-    table.column("Họ tên", anchor=W, width=100)
-    table.column("Ngày sinh", anchor=CENTER, width=80)
-    table.column("Số điện thoại", anchor=CENTER, width=80)
-    table.column("Giới tính", anchor=CENTER, width=60)
-    table.column("Chức vụ", anchor=CENTER, width=80)
-    table.column("Email", anchor=CENTER, width=80)
+    table.column("Mã nhân viên", anchor=CENTER, width=120)
+    table.column("Họ tên", anchor=W, width=140)
+    table.column("Ngày sinh", anchor=CENTER, width=100)
+    table.column("Số điện thoại", anchor=CENTER, width=120)
+    table.column("Giới tính", anchor=CENTER, width=100)
+    table.column("Chức vụ", anchor=CENTER, width=100)
+    table.column("Email", anchor=CENTER, width=120)
 
     table.heading("#0", text="", anchor=CENTER)
     table.heading("Mã nhân viên", text="Mã nhân viên", anchor=CENTER)
@@ -89,22 +89,22 @@ def QuanLyLayout(right_frame):
 
     lb_manv = CTkLabel(info_frame, text="Mã nhân viên", font=("Helvetica", 16))
     lb_manv.grid(row=1, column=0, pady=10)
-    text_manv = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_manv = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_manv.grid(row=1, column=1, pady=10)
 
     lb_ten = CTkLabel(info_frame, text="Họ tên", font=("Helvetica", 16))
     lb_ten.grid(row=2, column=0, pady=10)
-    text_ten = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_ten = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_ten.grid(row=2, column=1, pady=10)
 
     lb_ngaysinh = CTkLabel(info_frame, text="Ngày sinh", font=("Helvetica", 16))
     lb_ngaysinh.grid(row=3, column=0, pady=10)
-    text_ngaysinh = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_ngaysinh = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_ngaysinh.grid(row=3, column=1, pady=10)
 
     lb_sdt = CTkLabel(info_frame, text="Số điện thoại", font=("Helvetica", 16))
     lb_sdt.grid(row=4, column=0, pady=10)
-    text_sdt = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_sdt = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_sdt.grid(row=4, column=1, pady=10)
 
     lb_gioitinh = CTkLabel(info_frame, text="Giới tính", font=("Helvetica", 16))
