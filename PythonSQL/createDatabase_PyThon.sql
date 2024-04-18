@@ -7,14 +7,16 @@ USE `QLChamCong`;
 
 DROP TABLE IF EXISTS `NhanVien`;
 CREATE TABLE IF NOT EXISTS `NhanVien` (
-    `MaNV`      		VARCHAR(50) 		UNIQUE 			NOT NULL PRIMARY KEY,
+    `ID`  				INT UNSIGNED  	AUTO_INCREMENT	PRIMARY KEY,
+    `MaNV`      		VARCHAR(50) 		UNIQUE 			NOT NULL,
     `HoTen` 			VARCHAR(255) 		NOT NULL,
     `NgaySinh`     		DATE            	NOT NULL,
     `SoDienThoai`		VARCHAR(11)     	NOT NULL,
     `GioiTinh`			ENUM('Nam', 'Nữ')	NOT NULL,
     `ChucVu`			VARCHAR(100),
     `Email`				VARCHAR(100)    	NOT NULL,
-    `HinhAnh`			VARCHAR(255)
+    `HinhAnh`			VARCHAR(255),
+    `TrangThai`     	TINYINT         	NOT NULL DEFAULT 1
 );
 
 CREATE INDEX idx_MaNV ON `NhanVien`(`MaNV`);
@@ -22,7 +24,8 @@ CREATE INDEX idx_MaNV ON `NhanVien`(`MaNV`);
 /*________________________________BẢNG LIÊN QUAN TỚI KỲ CÔNG________________________________*/
 DROP TABLE IF EXISTS `KyCong`;
 CREATE TABLE IF NOT EXISTS `KyCong` (
-	`MaKyCong`      	VARCHAR(50) 							NOT NULL PRIMARY KEY,
+    `ID`  				INT UNSIGNED  		AUTO_INCREMENT	PRIMARY KEY	,
+	`MaKyCong`      	VARCHAR(50) 							NOT NULL,
     `Thang` 			VARCHAR(50) 							NOT NULL,
     `Nam`     		    VARCHAR(50)            					NOT NULL,
 	`NgayTinhCong`		DATE	 								NOT NULL,
@@ -78,10 +81,11 @@ CREATE TABLE IF NOT EXISTS `KyCongChiTiet` (
 /*________________________________BẢNG LIÊN QUAN TỚI CÔNG NHÂN VIÊN________________________________*/
 DROP TABLE IF EXISTS `CongNhanVien`;
 CREATE TABLE IF NOT EXISTS `CongNhanVien` (
-	`MaKyCong`			VARCHAR(50)				NOT NULL PRIMARY KEY,
+    `ID`  				INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	`MaKyCong`			VARCHAR(50)				NOT NULL,
     `MaNV`      		VARCHAR(50) 			NOT NULL,
     `HoTen` 			VARCHAR(255) 			NOT NULL,
-    `Ngay`     			DATE							,
+    `Ngay`     			DATETIME						,
     `Thu`				VARCHAR(11)						,
 	`ThoiGianVao`		DATETIME						,
     `ThoiGianRa`		DATETIME						,
