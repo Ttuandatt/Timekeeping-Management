@@ -7,8 +7,7 @@ USE `QLChamCong`;
 
 DROP TABLE IF EXISTS `NhanVien`;
 CREATE TABLE IF NOT EXISTS `NhanVien` (
-    `ID`  				INT UNSIGNED  	AUTO_INCREMENT	PRIMARY KEY,
-    `MaNV`      		VARCHAR(50) 		UNIQUE 			NOT NULL,
+    `MaNV`      		VARCHAR(50) 		NOT NULL	PRIMARY KEY,
     `HoTen` 			VARCHAR(255) 		NOT NULL,
     `NgaySinh`     		DATE            	NOT NULL,
     `SoDienThoai`		VARCHAR(11)     	NOT NULL,
@@ -24,8 +23,7 @@ CREATE INDEX idx_MaNV ON `NhanVien`(`MaNV`);
 /*________________________________BẢNG LIÊN QUAN TỚI KỲ CÔNG________________________________*/
 DROP TABLE IF EXISTS `KyCong`;
 CREATE TABLE IF NOT EXISTS `KyCong` (
-    `ID`  				INT UNSIGNED  		AUTO_INCREMENT	PRIMARY KEY	,
-	`MaKyCong`      	VARCHAR(50) 							NOT NULL,
+	`MaKyCong`      	VARCHAR(50) 							NOT NULL	PRIMARY KEY,
     `Thang` 			VARCHAR(50) 							NOT NULL,
     `Nam`     		    VARCHAR(50)            					NOT NULL,
 	`NgayTinhCong`		DATE	 								NOT NULL,
@@ -81,8 +79,7 @@ CREATE TABLE IF NOT EXISTS `KyCongChiTiet` (
 /*________________________________BẢNG LIÊN QUAN TỚI CÔNG NHÂN VIÊN________________________________*/
 DROP TABLE IF EXISTS `CongNhanVien`;
 CREATE TABLE IF NOT EXISTS `CongNhanVien` (
-    `ID`  				INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-	`MaKyCong`			VARCHAR(50)				NOT NULL,
+	`MaKyCong`			VARCHAR(50)				NOT NULL	PRIMARY KEY,
     `MaNV`      		VARCHAR(50) 			NOT NULL,
     `HoTen` 			VARCHAR(255) 			NOT NULL,
     `Ngay`     			DATETIME						,
