@@ -84,44 +84,44 @@ def QuanLyLayout(right_frame):
     # center_frame
     info_frame = Frame(center_frame, background="white")
     info_frame.pack()
-    lb_info = Label(info_frame, text="Thông tin nhân viên", font=("Helvetica", 25))
+    lb_info = CTkLabel(info_frame, text="Thông tin nhân viên", font=("Helvetica", 25),text_color="black")
     lb_info.grid(row=0, column=0, padx=0, pady=20, columnspan=2)
 
-    lb_manv = CTkLabel(info_frame, text="Mã nhân viên", font=("Helvetica", 16))
+    lb_manv = CTkLabel(info_frame, text="Mã nhân viên", font=("Helvetica", 16),text_color="black")
     lb_manv.grid(row=1, column=0, pady=10)
     text_manv = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_manv.grid(row=1, column=1, pady=10)
 
-    lb_ten = CTkLabel(info_frame, text="Họ tên", font=("Helvetica", 16))
+    lb_ten = CTkLabel(info_frame, text="Họ tên", font=("Helvetica", 16),text_color="black")
     lb_ten.grid(row=2, column=0, pady=10)
     text_ten = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_ten.grid(row=2, column=1, pady=10)
 
-    lb_ngaysinh = CTkLabel(info_frame, text="Ngày sinh", font=("Helvetica", 16))
+    lb_ngaysinh = CTkLabel(info_frame, text="Ngày sinh", font=("Helvetica", 16),text_color="black")
     lb_ngaysinh.grid(row=3, column=0, pady=10)
     text_ngaysinh = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_ngaysinh.grid(row=3, column=1, pady=10)
 
-    lb_sdt = CTkLabel(info_frame, text="Số điện thoại", font=("Helvetica", 16))
+    lb_sdt = CTkLabel(info_frame, text="Số điện thoại", font=("Helvetica", 16),text_color="black")
     lb_sdt.grid(row=4, column=0, pady=10)
     text_sdt = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_sdt.grid(row=4, column=1, pady=10)
 
-    lb_gioitinh = CTkLabel(info_frame, text="Giới tính", font=("Helvetica", 16))
+    lb_gioitinh = CTkLabel(info_frame, text="Giới tính", font=("Helvetica", 16),text_color="black")
     lb_gioitinh.grid(row=5, column=0, pady=10)
     values_gioitinh = ["Nam", "Nữ"]
     cb_gioitinh = ttk.Combobox(info_frame, values=values_gioitinh, font=("Helvetica", 10), width=15)
     cb_gioitinh.grid(row=5, column=1, pady=10)
 
-    lb_chucvu = CTkLabel(info_frame, text="Chức vụ", font=("Helvetica", 16))
+    lb_chucvu = CTkLabel(info_frame, text="Chức vụ", font=("Helvetica", 16),text_color="black")
     lb_chucvu.grid(row=6, column=0, pady=10)
     values_chucvu = ["Quản lý", "Nhân viên", "Thực tập"]
     cb_chucvu = ttk.Combobox(info_frame, values=values_chucvu, font=("Helvetica", 10), width=15)
     cb_chucvu.grid(row=6, column=1, pady=10)
 
-    lb_email = CTkLabel(info_frame, text="Email", font=("Helvetica", 16))
+    lb_email = CTkLabel(info_frame, text="Email", font=("Helvetica", 16),text_color="black")
     lb_email.grid(row=7, column=0, pady=5)
-    text_email = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_email = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_email.grid(row=7, column=1, pady=5)
 
     #img_record =   Image()
