@@ -23,7 +23,10 @@ def loadDuLieuGoc(my_tree):
     dem=1
     for info in (result):
         if( info[5]==0):
-            my_tree.insert("","end",iid=dem,text="",values=(dem,info[0],info[1],info[2],info[3],info[4],"Còn Hoạt Động"))
+            if(dem%2==0):
+                my_tree.insert("","end",iid=dem,text="",values=(dem,info[0],info[1],info[2],info[3],info[4],"Còn Hoạt Động"),tags=('oddrow',))
+            else:
+                my_tree.insert("","end",iid=dem,text="",values=(dem,info[0],info[1],info[2],info[3],info[4],"Còn Hoạt Động"),tags=('evenrow',))
             dem+=1
     mycursor.close()
 
@@ -35,7 +38,10 @@ def loadDuLieu(my_tree,listKyCong):
     dem=1
     for info in (listKyCong):
         if( info[5]==0):
-            my_tree.insert("","end",iid=dem,text="",values=(dem,info[0],info[1],info[2],info[3],info[4],"Còn Hoạt Động"))
+            if(dem%2==0):
+                my_tree.insert("","end",iid=dem,text="",values=(dem,info[0],info[1],info[2],info[3],info[4],"Còn Hoạt Động"),tags=('oddrow',))
+            else:
+                my_tree.insert("","end",iid=dem,text="",values=(dem,info[0],info[1],info[2],info[3],info[4],"Còn Hoạt Động"),tags=('evenrow',))
             dem+=1
 def timKiemKyCong(my_tree,listKyCong,text):
     kq=[]
@@ -43,10 +49,22 @@ def timKiemKyCong(my_tree,listKyCong,text):
         if(text in tmp[0]): # tìm kiếm theo mã sp
             kq.append(tmp)
     loadDuLieu(my_tree,kq)
-
+def KyCongChiTietChoNhanVien(MaKC):
+    mydatabase=mysql.connector.connect(user='root',password='dora1808',host='localhost',database="qlchamcong")
+    mycursor=mydatabase.cursor()
+    sql = """Select * From nhanvien as nv
+            Where NOT EXISTS ( Select 1 From kycongchitiet AS kc Where kc.MaNV = nv.MaNV and kc.MaKyCong=%s)"""
+    mycursor.execute(sql,(MaKC,))
+    result=mycursor.fetchall()
+    for nv in result:
+        values=(MaKC,nv[0],nv[1])
+        sql="""Insert into kycongchitiet(MaKyCong, MaNV, HoTen) VALUES(%s, %s, %s)"""
+        mycursor.execute(sql,values)
+    mydatabase.commit()
+    mycursor.close()
 def themKyCong(right_frame,my_tree):
     popUp_add=Toplevel(right_frame)
-    canGiuaCuaSo(popUp_add,400,400)
+    canGiuaCuaSo(popUp_add,500,400)
     popUp_add.title("Thêm kì công")
     
 
@@ -55,9 +73,9 @@ def themKyCong(right_frame,my_tree):
     label_Thang=Label(popUp_add,text="Tháng: ",font=("Arial",14))
     label_Nam=Label(popUp_add,text="Năm: ",font=("Arial",14))
     label_NgayTinhCong=Label(popUp_add,text="Ngày Tính Công: ",font=("Arial",14))
-    entry_Thang=ttk.Combobox(popUp_add,value=thang,font=("Arial",12))
-    entry_Nam=Entry(popUp_add,width=28,font=("Arial",10))
-    entry_NgayTinhCong=ttk.Combobox(popUp_add,value=ngay,font=("Arial",12))
+    entry_Thang=ttk.Combobox(popUp_add,value=thang,font=("Arial",14))
+    entry_Nam=Entry(popUp_add,width=21,font=("Arial",14))
+    entry_NgayTinhCong=ttk.Combobox(popUp_add,value=ngay,font=("Arial",14))
     label_Thang.grid(row=0,column=0,padx=10,pady=30,sticky="w")
     entry_Thang.grid(row=0,column=1,padx=20,pady=30,sticky="w")
     label_Nam.grid(row=1,column=0,padx=10,pady=30,sticky="w")
@@ -99,6 +117,7 @@ def themKyCong(right_frame,my_tree):
             mydatabase.commit()
             mycursor.close()
             messagebox.showinfo("Thông báo","Thêm kỳ công mới thành công")
+            KyCongChiTietChoNhanVien(maKC)
             loadDuLieuGoc(my_tree)
             popUp_add.destroy()
         else:
@@ -130,6 +149,8 @@ def LichChamCongLayout(right_frame):
     ChucNangChamCong.grid(row=0,column=0,sticky="nsew")
     DuLieuChamCong.grid(row=1,column=0,sticky="nsew")
     right_frame.grid_columnconfigure(0, weight=1)
+    right_frame.grid_rowconfigure(0, weight=1)
+    right_frame.grid_rowconfigure(1, weight=2)
     # load dữ liệu
     mydatabase=mysql.connector.connect(user='root',password='dora1808',host='localhost',database="qlchamcong")
     mycursor=mydatabase.cursor()
@@ -145,8 +166,8 @@ def LichChamCongLayout(right_frame):
     timKiem.pack(padx=10,pady=20,side="left")
     
 
-    btn_ThemKyCong=CTkButton(ChucNangChamCong,text="Kì Công Mới",font=("Arial", 12),fg_color="#4158D0",text_color="white",width=150,height=50,border_width=2,hover_color="light green",command=lambda: themKyCong(right_frame,my_tree))
-    btn_XoaKyCong=CTkButton(ChucNangChamCong,text="Xóa",font=("Arial", 12),fg_color="#FE6D73",text_color="white",width=100,height=50,border_width=2,command=lambda: xoaKyCong(my_tree))
+    btn_ThemKyCong=CTkButton(ChucNangChamCong,text="Kì Công Mới",font=("Arial", 14),fg_color="#4158D0",text_color="white",width=150,height=50,border_width=2,command=lambda: themKyCong(right_frame,my_tree))
+    btn_XoaKyCong=CTkButton(ChucNangChamCong,text="Xóa",font=("Arial", 14),fg_color="white",text_color="#FE6D73",width=100,height=50,border_width=2,command=lambda: xoaKyCong(my_tree))
     btn_XoaKyCong.pack(padx=10,pady=20,side="right")
     btn_ThemKyCong.pack(padx=10,pady=20,side="right")
 
@@ -154,7 +175,7 @@ def LichChamCongLayout(right_frame):
     # TreeView dùng để hiển thị dữ liệu bản 
     style=ttk.Style()
     style.configure("Treeview.Heading",rowheight=50, font=("Arial", 14)) 
-    style.configure("Treeview", rowheight=50,font=("Arial",12))
+    style.configure("Treeview", rowheight=50,font=("Arial",14))
     tree_frame=Frame(DuLieuChamCong)
     tree_frame.pack()
     my_tree=ttk.Treeview(tree_frame) 
@@ -171,9 +192,11 @@ def LichChamCongLayout(right_frame):
     my_tree.heading("SoNgayCong",text="Số Ngày Công",anchor=CENTER)
     my_tree.heading("TrangThai",text="Trạng Thái",anchor=CENTER)
     my_tree.column("#0",width=0,stretch=NO)
+    my_tree.tag_configure('evenrow', background="white")
+    my_tree.tag_configure('oddrow', background="lightblue")
     for i in column:
         my_tree.column(i,width=200,anchor=CENTER)
-    my_tree.column("STT",anchor=CENTER,width=50)
+    my_tree.column("STT",anchor=CENTER,width=60)
     loadDuLieu(my_tree,listKyCong)
 
     timKiem.bind("<KeyRelease>",lambda e: timKiemKyCong(my_tree,listKyCong,timKiem.get()))

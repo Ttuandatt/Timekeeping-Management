@@ -8,7 +8,7 @@ import numpy as np
 
 
 def ThongKeLayout(right_frame):
-    right_frame.config(bg="red")
+    right_frame.config(bg="white")
 
     
 

@@ -94,9 +94,6 @@ if db_manager.openConnection():
     print("Kết nối thành công!")
     # Thực hiện truy vấn SELECT * FROM nhanvien
     nhanvien = db_manager.selectAllNhanVien()
-    if nhanvien:
-        for nv in nhanvien:
-            print(nv)
     db_manager.closeConnection()
 else:
     print("Kết nối thất bại!")

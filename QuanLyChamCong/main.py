@@ -6,7 +6,8 @@ from customtkinter import *
 import time, face_recognition, cv2 
 import capCheck
 import numpy as np
-import TrangChuGUI, DangKyGUI, QuanLyGUI,LichChamCongGUI, ThongKeGUI # import các giao diện
+import DangKyGUI, QuanLyGUI,LichChamCongGUI, ThongKeGUI # import các giao diện
+
 
 def canGiuaCuaSo(window,width,height):
     window.resizable(width=False,height=False)
@@ -97,6 +98,8 @@ def Login_Window():
             password = pass_text.get()
             if ( username=="admin" and password=="admin"):
                 messagebox.showinfo("Thông báo","Đăng nhập thành công ^^")
+                user_text.delete(0,END)
+                pass_text.delete(0,END)
                 login_window.withdraw()
                 Main_Window(login_window)
             else:

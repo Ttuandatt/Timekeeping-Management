@@ -10,13 +10,13 @@ import database_manager
 from database_manager import nhanvien
 import random
 from datetime import datetime
-
+import os
 
 # Tạo biến toàn cục để lưu trữ mã nhân viên
 ma_nv_global = ""
 def DangKyLayout(right_frame):
-        left_frame_dk = Frame(right_frame, bg="white",width=600,height=800)
-        right_frame_dk = Frame(right_frame, bg="white",width=600,height=800)
+        left_frame_dk = Frame(right_frame, bg="white",width=500,height=800)
+        right_frame_dk = Frame(right_frame, bg="white",width=700,height=800)
         left_frame_dk.grid(row=0,column=0,sticky="nsew")
 
         right_frame_dk.grid(row=0,column=1,sticky="nsew")
@@ -28,6 +28,8 @@ def DangKyLayout(right_frame):
             count = 0   # Biến đếm để chỉ lưu vào database 1 lần đối với 1 nhân viên, nếu không sẽ bị lỗi do lưu mã nhân viên đã có
             cap = cv2.VideoCapture(0)
             dem = 0
+            folderName=text_manv.get()
+            os.makedirs(f"QuanLyChamCong/imgCheck/{folderName}")
             while True:
                 ret, frame = cap.read()
                 frame = cv2.resize(frame, (350, 350))
@@ -36,11 +38,9 @@ def DangKyLayout(right_frame):
                 img3 = ImageTk.PhotoImage(Image.fromarray(img1))
                 if count == 0:
                     if len(face_recognition.face_encodings(img1)) > 0:
-                        dem += 1
                         img_name = f"{text_manv.get()}{dem}.png"
-                        cv2.imwrite(
-                            f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{img_name}",
-                            frame)
+                        cv2.imwrite(f"QuanLyChamCong/imgCheck/{folderName}/{img_name}",frame)
+                        dem += 1
                         print("được")
                         # Lưu thông tin nhân viên vào cơ sở dữ liệu
                         luuThongTinNhanVien(img_name)
@@ -51,11 +51,11 @@ def DangKyLayout(right_frame):
                         break
                 else:
                     if len(face_recognition.face_encodings(img1)) > 0:
-                        dem += 1
                         img_name = f"{text_manv.get()}{dem}.png"
                         cv2.imwrite(
-                            f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{img_name}",
+                            f"QuanLyChamCong/imgCheck/{folderName}/{img_name}",
                             frame)
+                        dem += 1
                         print("được")
                         # Lưu thông tin nhân viên vào cơ sở dữ liệu
                         count += 1
@@ -66,6 +66,9 @@ def DangKyLayout(right_frame):
 
             cap.release()
             cv2.destroyAllWindows()
+            anhNV=Image.open(f"QuanLyChamCong/imgCheck/{folderName}/{folderName}0.png")
+            label_hinhAnh.configure(image=anhNV)
+
 
         # nhập tên, chụp ảnh
         label_Khung=LabelFrame(right_frame_dk,bg="white",borderwidth=5)
@@ -76,37 +79,37 @@ def DangKyLayout(right_frame):
         btn_dangky.pack()
 
         # left_frame_dk chứa các thành phần để nhập thông tin nhân viên
-        label_ten = Label(left_frame_dk, text="Họ tên", width=19, height=3, font=("Arial", 15))
-        label_ten.grid(row=0, column=0, pady=8, padx = 60)
-        text_ten = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
+        label_ten = Label(left_frame_dk, text="Họ Tên", font=("Arial", 15), background="white")
+        label_ten.grid(row=0, column=0, pady=30, padx=50, sticky="w")
+        text_ten = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
         text_ten.grid(row=0, column=1)
-        label_ngaysinh = Label(left_frame_dk, text="Ngày sinh: ", width=19, height=3, font=("Arial", 15))
-        label_ngaysinh.grid(row=1,column=0, pady=8)
-        text_ngaysinh = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
+        label_ngaysinh = Label(left_frame_dk, text="Ngày Sinh: ", font=("Arial", 15), background="white")
+        label_ngaysinh.grid(row=1,column=0, pady=30, padx=50, sticky="w")
+        text_ngaysinh = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
         text_ngaysinh.grid(row=1,column=1)
-        label_sdt = Label(left_frame_dk, text="Số điện thoại: ", width=19, height=3, font=("Arial", 15))
-        label_sdt.grid(row=2, column=0, pady=8)
-        text_sdt = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
+        label_sdt = Label(left_frame_dk, text="Số Điện Thoại: ", font=("Arial", 15), background="white")
+        label_sdt.grid(row=2, column=0, pady=30, padx=50, sticky="w")
+        text_sdt = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
         text_sdt.grid(row=2, column=1)
-        label_gioitinh = Label(left_frame_dk, text="Giới tính: ", width=19, height=3, font=("Arial", 15))
-        label_gioitinh.grid(row=3,column=0, pady=8)
+        label_gioitinh = Label(left_frame_dk, text="Giới Tính: ", font=("Arial", 15), background="white")
+        label_gioitinh.grid(row=3,column=0, pady=30, padx=50, sticky="w")
         value_gioitinh = ["Nam", "Nữ"]
-        combobox_gioitinh = ttk.Combobox(left_frame_dk, values=value_gioitinh, font=("Arial", 15), state="readonly")
+        combobox_gioitinh = ttk.Combobox(left_frame_dk, values=value_gioitinh, font=("Arial", 15), background="white", state="readonly")
         combobox_gioitinh["width"] = 19
         combobox_gioitinh.grid(row=3, column=1)
-        label_chucvu = Label(left_frame_dk, text="Chức vụ: ", width=19, height=3, font=("Arial", 15))
-        label_chucvu.grid(row=4,column=0, pady=8)
+        label_chucvu = Label(left_frame_dk, text="Chức Vụ: ", font=("Arial", 15), background="white")
+        label_chucvu.grid(row=4,column=0, pady=30, padx=50, sticky="w")
         value_chucvu = ["Quản lý", "Nhân viên", "Thực tập"]
-        combobox_chucvu = ttk.Combobox(left_frame_dk, values=value_chucvu, font=("Arial", 15), state="readonly")
+        combobox_chucvu = ttk.Combobox(left_frame_dk, values=value_chucvu, font=("Arial", 15), background="white", state="readonly")
         combobox_chucvu["width"] = 19
         combobox_chucvu.grid(row=4, column=1)
-        label_email = Label(left_frame_dk, text="Email: ", width=19, height=3, font=("Arial", 15))
-        label_email.grid(row=5, column=0, pady=8)
-        text_email = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3)
+        label_email = Label(left_frame_dk, text="Email: ", font=("Arial", 15), background="white")
+        label_email.grid(row=5, column=0, pady=30, padx=50, sticky="w")
+        text_email = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
         text_email.grid(row=5, column=1)
-        label_manv = Label(left_frame_dk, text="Mã NV: ", width=19, height=3, font=("Arial", 15))
-        label_manv.grid(row=6, column=0, pady=8)
-        text_manv = Entry(left_frame_dk, font=("Arial", 15), borderwidth=3, state="readonly")
+        label_manv = Label(left_frame_dk, text="Mã NV: ", font=("Arial", 15), background="white")
+        label_manv.grid(row=6, column=0, pady=30, padx=50, sticky="w")
+        text_manv = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3, state="readonly")
         text_manv.grid(row=6, column=1)
 
         def luuThongTinNhanVien(img_name):
@@ -127,7 +130,7 @@ def DangKyLayout(right_frame):
             connection = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="123456",
+                password="dora1808",
                 database="qlchamcong"
             )
             cursor = connection.cursor()
@@ -191,8 +194,7 @@ def DangKyLayout(right_frame):
 
 
 
-        button_lammoi = CTkButton(left_frame_dk, text="Làm mới", width=100, height=50, command=button_clear)
-        button_lammoi.grid(row=7, column=1)
-        button_xacnhan = CTkButton(left_frame_dk, text="Xác nhận", width=100, height=50, command=button_XacNhan)
-        button_xacnhan.grid(row=7, column=2)
-
+        button_lammoi = CTkButton(left_frame_dk, text="Làm Mới", width=100, height=50, command=button_clear)
+        button_lammoi.grid(row=7, column=0)
+        button_xacnhan = CTkButton(left_frame_dk, text="Xác Nhận", width=100, height=50, command=button_XacNhan)
+        button_xacnhan.grid(row=7, column=1)
