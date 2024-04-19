@@ -30,23 +30,44 @@ class DatabaseManager:
         except Exception as e:
             print(e)
 
-    # Thực hiện truy vấn SELECT * FROM nhanvien và trả về kết quả
-    def selectAllNhanVien(self):
-
+        # Thực hiện truy vấn SELECT * FROM nhanvien và trả về kết quả
+    def selectNhanVien(self):
         try:
             cursor = self.con.cursor()
-            cursor.execute("SELECT * FROM `nhanvien`")
+            cursor.execute("SELECT * FROM NhanVien WHERE `TrangThai`=1")
             result = cursor.fetchall()
             cursor.close()
             return result
         except Exception as e:
             print(e)
             return None
+        
+    def selectAllNhanVien(self):
+        try:
+            cursor = self.con.cursor()
+            cursor.execute("SELECT * FROM NhanVien")
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except Exception as e:
+            print(e)
+            return None
+        
+    def deleteNhanVien(self, manv):
+        try:
+            cursor = self.con.cursor()
+            query = "UPDATE `NhanVien` SET  `TrangThai`=%s WHERE `MaNV`=%s"
+            cursor.execute(query, ("0", manv))
+            self.con.commit()
+            cursor.close()
+            messagebox.showinfo("Thông báo", "Xoá nhân viên thành công")
+        except Exception as e:
+            messagebox.showinfo("Thông báo", "Xoá nhân viên thất bại")
 
     def insertNhanVien(self, ma_nv, ho_ten, ngay_sinh, so_dien_thoai, gioi_tinh, chuc_vu, email):
         try:
             cursor = self.con.cursor()
-            query = "INSERT INTO `nhanvien` (MaNV, HoTen, NgaySinh, SoDienThoai, GioiTinh, ChucVu, Email) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO NhanVien (MaNV, HoTen, NgaySinh, SoDienThoai, GioiTinh, ChucVu, Email) VALUES (%s, %s, %s, %s, %s, %s, %s)"
             values = (ma_nv, ho_ten, ngay_sinh, so_dien_thoai, gioi_tinh, chuc_vu, email)
             cursor.execute(query, values)
             self.con.commit()
@@ -58,11 +79,11 @@ class DatabaseManager:
     def updateNhanVien(self, manv, hoten, ngaysinh, sdt, gioitinh, chucvu, email):
         try:
             cursor = self.con.cursor()
-            update_query = "UPDATE `nhanvien` SET `HoTen`=%s, `NgaySinh`=%s, `SoDienThoai`=%s, `GioiTinh`=%s, `ChucVu`=%s, `Email`=%s WHERE `MaNV`=%s"
-            values = (manv, hoten, ngaysinh, sdt, gioitinh, chucvu, email)
+            update_query = "UPDATE `NhanVien` SET `HoTen`=%s, `NgaySinh`=%s, `SoDienThoai`=%s, `GioiTinh`=%s, `ChucVu`=%s, `Email`=%s WHERE `MaNV`=%s"
+            values = (hoten, ngaysinh, sdt, gioitinh, chucvu, email, manv)
             cursor.execute(update_query, values)
             self.con.commit()
-            self.con.close()
+            cursor.close()
             messagebox.showinfo("Thông báo", "Cập nhật thành công")
         except Exception as e:
             messagebox.showinfo("Thông báo", "Cập nhật thất bại")
