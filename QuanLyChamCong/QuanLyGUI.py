@@ -1,4 +1,5 @@
 import datetime
+import re
 from tkinter import *
 from tkinter import messagebox, ttk
 
@@ -90,7 +91,7 @@ def QuanLyLayout(right_frame):
     def btnQuery():
         dbManager = database_manager.DatabaseManager()
         if dbManager.openConnection():
-            nhanvien = dbManager.selectAllNhanVien()
+            nhanvien = dbManager.selectNhanVien()
             global count 
             count = 0
             for nv in nhanvien:
@@ -112,7 +113,7 @@ def QuanLyLayout(right_frame):
         table.delete(*table.get_children())
         dbManager = database_manager.DatabaseManager()
         if dbManager.openConnection():
-            nhanvien = dbManager.selectAllNhanVien()
+            nhanvien = dbManager.selectNhanVien()
             tk = cb_timkiem.get()
             duLieu = text_timkiem.get().lower()
             for nv in nhanvien:
