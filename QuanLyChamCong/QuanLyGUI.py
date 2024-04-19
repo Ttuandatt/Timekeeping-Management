@@ -1,9 +1,8 @@
+import datetime
 from tkinter import *
 from tkinter import messagebox, ttk
-import re
-import cv2
+
 import database_manager
-import face_recognition
 import numpy as np
 from customtkinter import *
 from PIL import Image, ImageTk
@@ -20,24 +19,9 @@ def QuanLyLayout(right_frame):
     right_frame.grid_columnconfigure(1, weight=1)
     right_frame.grid_columnconfigure(0, weight=2)
     right_frame.grid_rowconfigure(0, weight=1)
-    
-    # right_frame_qly
-    def btnTimKiem():
-        pass
 
-    timKiem_frame = Frame(right_frame_qly, background="white",width=800)
+    timKiem_frame = Frame(right_frame_qly, background="white")
     timKiem_frame.pack(pady=10)
-    lb_timkiem = Label(timKiem_frame, text="Tìm kiếm theo:", font=("Helvetica", 15), foreground="red", background="white")
-    lb_timkiem.grid(row=0, column=0, padx= 5, pady=10)
-    value_timkiem = ["Mã nhân viên", "Tên nhân viên", "Chức vụ"]
-    cb_timkiem = ttk.Combobox(timKiem_frame, values= value_timkiem, font=("Arial", 10))
-    cb_timkiem.grid(row=0, column=1, padx=5, pady=10)
-    text_timkiem = Entry(timKiem_frame)
-    text_timkiem.grid(row=0, column=2, padx=5, pady=10)
-    button_tk = Button(timKiem_frame, text="Tìm kiếm", command=btnTimKiem)
-    button_tk.grid(row=0, column=3, padx=5, pady=10)
-    button_xemtatca = Button(timKiem_frame, text="Xem tất cả") #, command=btnXemTatca)
-    button_xemtatca.grid(row=0, column=4, padx=0, pady=10)
 
     style = ttk.Style()
     style.theme_use("default")
@@ -46,7 +30,7 @@ def QuanLyLayout(right_frame):
     # Change selected color
     '''style.map('Treeview', background=[('Selected', "lightblue")])'''
 
-    table_frame = Frame(right_frame_qly,width=800)
+    table_frame = Frame(right_frame_qly)
     table_frame.pack(pady=20)
 
     tbscrolly = Scrollbar(table_frame)
@@ -61,13 +45,13 @@ def QuanLyLayout(right_frame):
 
     table['column'] = ("Mã nhân viên", "Họ tên", "Ngày sinh", "Số điện thoại", "Giới tính", "Chức vụ", "Email")
     table.column("#0", width=0, stretch=NO)
-    table.column("Mã nhân viên", anchor=CENTER, width=120)
-    table.column("Họ tên", anchor=W, width=140)
-    table.column("Ngày sinh", anchor=CENTER, width=100)
-    table.column("Số điện thoại", anchor=CENTER, width=120)
-    table.column("Giới tính", anchor=CENTER, width=100)
-    table.column("Chức vụ", anchor=CENTER, width=100)
-    table.column("Email", anchor=CENTER, width=120)
+    table.column("Mã nhân viên", anchor=CENTER, width=80)
+    table.column("Họ tên", anchor=W, width=100)
+    table.column("Ngày sinh", anchor=CENTER, width=80)
+    table.column("Số điện thoại", anchor=CENTER, width=80)
+    table.column("Giới tính", anchor=CENTER, width=60)
+    table.column("Chức vụ", anchor=CENTER, width=80)
+    table.column("Email", anchor=CENTER, width=80)
 
     table.heading("#0", text="", anchor=CENTER)
     table.heading("Mã nhân viên", text="Mã nhân viên", anchor=CENTER)
@@ -81,50 +65,7 @@ def QuanLyLayout(right_frame):
     table.tag_configure('evenrow', background="white")
     table.tag_configure('oddrow', background="lightblue")
 
-    # center_frame
-    info_frame = Frame(center_frame, background="white")
-    info_frame.pack()
-    lb_info = CTkLabel(info_frame, text="Thông tin nhân viên", font=("Helvetica", 25),text_color="black")
-    lb_info.grid(row=0, column=0, padx=0, pady=20, columnspan=2)
 
-    lb_manv = CTkLabel(info_frame, text="Mã nhân viên", font=("Helvetica", 16),text_color="black")
-    lb_manv.grid(row=1, column=0, pady=10)
-    text_manv = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
-    text_manv.grid(row=1, column=1, pady=10)
-
-    lb_ten = CTkLabel(info_frame, text="Họ tên", font=("Helvetica", 16),text_color="black")
-    lb_ten.grid(row=2, column=0, pady=10)
-    text_ten = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
-    text_ten.grid(row=2, column=1, pady=10)
-
-    lb_ngaysinh = CTkLabel(info_frame, text="Ngày sinh", font=("Helvetica", 16),text_color="black")
-    lb_ngaysinh.grid(row=3, column=0, pady=10)
-    text_ngaysinh = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
-    text_ngaysinh.grid(row=3, column=1, pady=10)
-
-    lb_sdt = CTkLabel(info_frame, text="Số điện thoại", font=("Helvetica", 16),text_color="black")
-    lb_sdt.grid(row=4, column=0, pady=10)
-    text_sdt = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
-    text_sdt.grid(row=4, column=1, pady=10)
-
-    lb_gioitinh = CTkLabel(info_frame, text="Giới tính", font=("Helvetica", 16),text_color="black")
-    lb_gioitinh.grid(row=5, column=0, pady=10)
-    values_gioitinh = ["Nam", "Nữ"]
-    cb_gioitinh = ttk.Combobox(info_frame, values=values_gioitinh, font=("Helvetica", 10), width=15)
-    cb_gioitinh.grid(row=5, column=1, pady=10)
-
-    lb_chucvu = CTkLabel(info_frame, text="Chức vụ", font=("Helvetica", 16),text_color="black")
-    lb_chucvu.grid(row=6, column=0, pady=10)
-    values_chucvu = ["Quản lý", "Nhân viên", "Thực tập"]
-    cb_chucvu = ttk.Combobox(info_frame, values=values_chucvu, font=("Helvetica", 10), width=15)
-    cb_chucvu.grid(row=6, column=1, pady=10)
-
-    lb_email = CTkLabel(info_frame, text="Email", font=("Helvetica", 16),text_color="black")
-    lb_email.grid(row=7, column=0, pady=5)
-    text_email = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2,fg_color="white")
-    text_email.grid(row=7, column=1, pady=5)
-
-    #img_record =   Image()
 
     def select_record(e):
         text_manv.delete(0, END)
@@ -167,6 +108,91 @@ def QuanLyLayout(right_frame):
     btnQuery()
     table.bind("<ButtonRelease-1>", select_record)
 
+    def btnTimKiem():
+        table.delete(*table.get_children())
+        dbManager = database_manager.DatabaseManager()
+        if dbManager.openConnection():
+            nhanvien = dbManager.selectAllNhanVien()
+            tk = cb_timkiem.get()
+            duLieu = text_timkiem.get().lower()
+            for nv in nhanvien:
+                if tk=="Mã nhân viên":
+                    if duLieu in nv[0].lower():
+                        table.insert("", END, values=(nv[0], nv[1], nv[2], nv[3], nv[4], nv[5], nv[6]),
+                             tags=('evenrow',))
+                elif tk=="Tên nhân viên":
+                    if duLieu in nv[1].lower():
+                        table.insert("", END, values=(nv[0], nv[1], nv[2], nv[3], nv[4], nv[5], nv[6]),
+                             tags=('evenrow',))
+                elif tk=="Chức vụ":
+                    if duLieu in nv[5].lower():
+                        table.insert("", END, values=(nv[0], nv[1], nv[2], nv[3], nv[4], nv[5], nv[6]),
+                             tags=('evenrow',))
+            dbManager.closeConnection()
+        else:
+            print("Kết nối thất bại!")
+    
+    def btnXemTatCa():
+        table.delete(*table.get_children())
+        btnQuery()
+
+    lb_timkiem = Label(timKiem_frame, text="Tìm kiếm theo:", font=("Helvetica", 15), foreground="red", background="white")
+    lb_timkiem.grid(row=0, column=0, padx= 5, pady=10)
+    value_timkiem = ["Mã nhân viên", "Tên nhân viên", "Chức vụ"]
+    cb_timkiem = ttk.Combobox(timKiem_frame, values= value_timkiem, font=("Arial", 10))
+    cb_timkiem.grid(row=0, column=1, padx=5, pady=10)
+    text_timkiem = Entry(timKiem_frame)
+    text_timkiem.grid(row=0, column=2, padx=5, pady=10)
+    button_tk = Button(timKiem_frame, text="Tìm kiếm", command=btnTimKiem)
+    button_tk.grid(row=0, column=3, padx=5, pady=10)
+    button_xemtatca = Button(timKiem_frame, text="Xem tất cả", command=btnXemTatCa)
+    button_xemtatca.grid(row=0, column=4, padx=0, pady=10)
+
+    # center_frame
+    info_frame = Frame(center_frame, background="white")
+    info_frame.pack()
+    lb_info = Label(info_frame, text="Thông tin nhân viên", font=("Helvetica", 25))
+    lb_info.grid(row=0, column=0, padx=0, pady=20, columnspan=2)
+
+    lb_manv = CTkLabel(info_frame, text="Mã nhân viên", font=("Helvetica", 16))
+    lb_manv.grid(row=1, column=0, pady=10)
+    text_manv = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_manv.grid(row=1, column=1, pady=10)
+
+    lb_ten = CTkLabel(info_frame, text="Họ tên", font=("Helvetica", 16))
+    lb_ten.grid(row=2, column=0, pady=10)
+    text_ten = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_ten.grid(row=2, column=1, pady=10)
+
+    lb_ngaysinh = CTkLabel(info_frame, text="Ngày sinh", font=("Helvetica", 16))
+    lb_ngaysinh.grid(row=3, column=0, pady=10)
+    text_ngaysinh = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_ngaysinh.grid(row=3, column=1, pady=10)
+
+    lb_sdt = CTkLabel(info_frame, text="Số điện thoại", font=("Helvetica", 16))
+    lb_sdt.grid(row=4, column=0, pady=10)
+    text_sdt = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_sdt.grid(row=4, column=1, pady=10)
+
+    lb_gioitinh = CTkLabel(info_frame, text="Giới tính", font=("Helvetica", 16))
+    lb_gioitinh.grid(row=5, column=0, pady=10)
+    values_gioitinh = ["Nam", "Nữ"]
+    cb_gioitinh = ttk.Combobox(info_frame, values=values_gioitinh, font=("Helvetica", 10), width=15)
+    cb_gioitinh.grid(row=5, column=1, pady=10)
+
+    lb_chucvu = CTkLabel(info_frame, text="Chức vụ", font=("Helvetica", 16))
+    lb_chucvu.grid(row=6, column=0, pady=10)
+    values_chucvu = ["Quản lý", "Nhân viên", "Thực tập"]
+    cb_chucvu = ttk.Combobox(info_frame, values=values_chucvu, font=("Helvetica", 10), width=15)
+    cb_chucvu.grid(row=6, column=1, pady=10)
+
+    lb_email = CTkLabel(info_frame, text="Email", font=("Helvetica", 16))
+    lb_email.grid(row=7, column=0, pady=5)
+    text_email = CTkEntry(info_frame, font=("Helvetica", 15), corner_radius=20, text_color="black", border_width=2)
+    text_email.grid(row=7, column=1, pady=5)
+
+    #img_record =  Image()
+
     def btnLamMoi():
         text_manv.delete(0, END)
         text_ten.delete(0, END)
@@ -176,21 +202,19 @@ def QuanLyLayout(right_frame):
         cb_chucvu.set(' ')
         cb_gioitinh.set(' ')
 
-    ###
     def btnCapNhat():
         selected = table.focus()
-        if (selected==""):
+        table.item(selected, values=(text_manv.get()))
+        manv = text_manv.get()
+        ten = text_ten.get()
+        ngaysinh = text_ngaysinh.get()
+        sdt = text_sdt.get()
+        gioitinh = cb_gioitinh.get()
+        chucvu = cb_chucvu.get()
+        email = text_email.get()
+        if (selected=="" or manv=="" or ten=="" or ngaysinh=="" or sdt=="" or gioitinh=="" or chucvu=="" or email==""):
             messagebox.showinfo("Thông báo", "Vui lòng chọn nhân viên!")
-        else: 
-            table.item(selected, text="", values=(text_manv.get()))
-            manv = text_manv.get()
-            ten = text_ten.get()
-            ngaysinh = text_ngaysinh.get()
-            sdt = text_sdt.get()
-            gioitinh = cb_gioitinh.get()
-            chucvu = cb_chucvu.get()
-            email = text_email.get()
-
+        else:
             dbManager = database_manager.DatabaseManager()
             if dbManager.openConnection():
                 dbManager.updateNhanVien(manv, ten, ngaysinh, sdt, gioitinh, chucvu, email)
@@ -198,10 +222,27 @@ def QuanLyLayout(right_frame):
             else:
                 print("Kết nối thất bại!")
             btnLamMoi()
+        table.delete(*table.get_children())
+        btnQuery()
+        
+            
 
     def btnXoa():
-        pass
-
+        selected = table.focus()
+        table.item(selected, text="", values=(text_manv.get()))
+        manv = text_manv.get()
+        if (selected=="" or manv==""):
+            messagebox.showinfo("Thông báo", "Vui lòng chọn nhân viên!")
+        else: 
+            dbManager = database_manager.DatabaseManager()
+            if dbManager.openConnection():
+                dbManager.deleteNhanVien(manv)
+                dbManager.closeConnection()
+            else:
+                print("Kết nối thất bại!")
+            btnLamMoi()
+        table.delete(*table.get_children())
+        btnQuery()
 
     def btnXemAnh():
         pass
