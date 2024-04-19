@@ -18,5 +18,5 @@ INSERT INTO `KyCong` (`MaKyCong`, `Thang`, `Nam`, `NgayTinhCong`, `SoNgayCong`, 
 
 /* Dữ liệu bảng CongNhanVien */
 INSERT INTO `CongNhanVien` (`MaKyCong`, `MaNV`, `HoTen`, `Ngay`, `Thu`, `ThoiGianVao`, `ThoiGianRa`) VALUES 
-('KC032024', 'NV002', 'Lê Văn B', '2024-03-18', 'Thứ 2', '2024-03-18 07:10:20', '2024-03-18 17:02:05'),
-('KC032024', 'NV001', 'Nguyễn Văn A', '2024-03-18', 'Thứ 2', '2024-03-18 07:05:20', NULL);
+('KC032024', 'NV002', 'Lê Văn B', '2024-03-18', 'Thứ 2', '07:10:20', '17:02:05'),
+('KC032024', 'NV001', 'Nguyễn Văn A', '2024-03-18', 'Thứ 2', '07:05:20', NULL);
