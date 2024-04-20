@@ -155,13 +155,19 @@ def DangKyLayout(right_frame):
                 gender = "M"
             elif gioi_tinh == "Nữ":
                 gender = "F"
-
-            # Kiểm tra nếu mã nhân viên chưa được tạo hoặc là lần đầu tiên
-            if not ma_nv_global:
-                ma_nv_global = "NV" + so_dien_thoai[-4:] + gender + str(random.randint(0, 9999)).zfill(4)
-
+            if chuc_vu == "Quản lý":
+                # Kiểm tra nếu mã nhân viên chưa được tạo hoặc là lần đầu tiên
+                if not ma_nv_global:
+                    ma_nv_global = "NV" + so_dien_thoai[-4:] + gender + str(random.randint(0, 9999)).zfill(4) + "0"
+            if chuc_vu == "Nhân viên":
+                # Kiểm tra nếu mã nhân viên chưa được tạo hoặc là lần đầu tiên
+                if not ma_nv_global:
+                    ma_nv_global = "NV" + so_dien_thoai[-4:] + gender + str(random.randint(0, 9999)).zfill(4) + "1"
+            if chuc_vu == "Thực tập":
+                # Kiểm tra nếu mã nhân viên chưa được tạo hoặc là lần đầu tiên
+                if not ma_nv_global:
+                    ma_nv_global = "NV" + so_dien_thoai[-4:] + gender + str(random.randint(0, 9999)).zfill(4) + "2"
             return ma_nv_global
-
         # hàm clear các textfield, combobox
         def button_clear():
             text_ten.delete(0, END)
