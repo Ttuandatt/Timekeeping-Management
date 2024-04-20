@@ -3,13 +3,14 @@ from tkinter import ttk, Label
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from customtkinter import *
-import face_recognition, cv2 
+import face_recognition, cv2
 import numpy as np
 import mysql.connector
 import database_manager
 from database_manager import nhanvien
 import random
 from datetime import datetime
+import re  # Thêm import biểu thức chính quy để kiểm tra syntax của dữ liệu nhập vào
 import os
 
 # Tạo biến toàn cục để lưu trữ mã nhân viên
@@ -29,7 +30,7 @@ def DangKyLayout(right_frame):
             cap = cv2.VideoCapture(0)
             dem = 0
             folderName=text_manv.get()
-            os.makedirs(f"QuanLyChamCong/imgCheck/{folderName}")
+            os.makedirs(f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}")
             while True:
                 ret, frame = cap.read()
                 frame = cv2.resize(frame, (350, 350))
@@ -39,7 +40,7 @@ def DangKyLayout(right_frame):
                 if count == 0:
                     if len(face_recognition.face_encodings(img1)) > 0:
                         img_name = f"{text_manv.get()}{dem}.png"
-                        cv2.imwrite(f"QuanLyChamCong/imgCheck/{folderName}/{img_name}",frame)
+                        cv2.imwrite(f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}/{img_name}",frame)
                         dem += 1
                         print("được")
                         # Lưu thông tin nhân viên vào cơ sở dữ liệu
@@ -53,7 +54,7 @@ def DangKyLayout(right_frame):
                     if len(face_recognition.face_encodings(img1)) > 0:
                         img_name = f"{text_manv.get()}{dem}.png"
                         cv2.imwrite(
-                            f"QuanLyChamCong/imgCheck/{folderName}/{img_name}",
+                            f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}/{img_name}",
                             frame)
                         dem += 1
                         print("được")
@@ -66,17 +67,11 @@ def DangKyLayout(right_frame):
 
             cap.release()
             cv2.destroyAllWindows()
-            anhNV=Image.open(f"QuanLyChamCong/imgCheck/{folderName}/{folderName}0.png")
-            label_hinhAnh.configure(image=anhNV)
+            img =  Image.open(f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}/{folderName}0.png")
+            anhNV = ImageTk.PhotoImage(img)
 
 
-        # nhập tên, chụp ảnh
-        label_Khung=LabelFrame(right_frame_dk,bg="white",borderwidth=5)
-        label_Khung.pack(pady=29)
-        label_hinhAnh=Label(label_Khung, bg="light gray",text="",width=50,height=30)
-        label_hinhAnh.pack()
-        btn_dangky=CTkButton(right_frame_dk,text="Chụp Ảnh",width=100,height=50, command=showHinhAnh)
-        btn_dangky.pack()
+
 
         # left_frame_dk chứa các thành phần để nhập thông tin nhân viên
         label_ten = Label(left_frame_dk, text="Họ Tên", font=("Arial", 15), background="white")
@@ -112,6 +107,8 @@ def DangKyLayout(right_frame):
         text_manv = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3, state="readonly")
         text_manv.grid(row=6, column=1)
 
+
+
         def luuThongTinNhanVien(img_name):
             ho_ten = text_ten.get()
             ngay_sinh_str = text_ngaysinh.get()  # Lấy chuỗi ngày sinh từ entry
@@ -123,21 +120,19 @@ def DangKyLayout(right_frame):
             chuc_vu = combobox_chucvu.get()
             email = text_email.get()
 
-            # Tạo mã nhân viên
-            ma_nv = taoMaNhanVien(chuc_vu, so_dien_thoai, gioi_tinh)
 
             # Kết nối đến cơ sở dữ liệu
             connection = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="dora1808",
+                password="123456",
                 database="qlchamcong"
             )
             cursor = connection.cursor()
 
             # Thực hiện chèn dữ liệu vào cơ sở dữ liệu
             sql = "INSERT INTO NhanVien (`MaNV`, `HoTen`, `NgaySinh`, `SoDienThoai`, `GioiTinh`, `ChucVu`, `Email`, `HinhAnh`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            val = (ma_nv, ho_ten, ngay_sinh_formatted, so_dien_thoai, gioi_tinh, chuc_vu, email, img_name)
+            val = (ma_nv_global, ho_ten, ngay_sinh_formatted, so_dien_thoai, gioi_tinh, chuc_vu, email, img_name)
             cursor.execute(sql, val)
 
             connection.commit()
@@ -168,7 +163,96 @@ def DangKyLayout(right_frame):
                 if not ma_nv_global:
                     ma_nv_global = "NV" + so_dien_thoai[-4:] + gender + str(random.randint(0, 9999)).zfill(4) + "2"
             return ma_nv_global
-        # hàm clear các textfield, combobox
+
+        def check_sdt(sdt):
+            result = 0
+            # Kiểm tra độ dài của số điện thoại
+            if len(sdt)  != 10:
+                result = 1
+            # Kiểm tra số điện thoại có chứa ký tự không phải là số hay không
+            if not re.match(r'^\d+$', sdt):
+                result = 2
+
+            # Kiểm tra số điện thoại đã tồn tại trong cơ sở dữ liệu hay chưa
+            connection = mysql.connector.connect(
+                host = "localhost",
+                user = "root",
+                password = "123456",
+                database = "qlchamcong"
+            )
+            cursor = connection.cursor()
+
+            # Truy vấn để kiểm tra số điện thoại trong cơ sở dữ liệu
+            query = "SELECT COUNT(*) FROM NhanVien WHERE SoDienThoai = %s"
+            cursor.execute(query, (sdt,))
+            # Lấy kết quả truy vấn
+            count = cursor.fetchone()[0]
+            # Đóng kết nối với cơ sở dữ liệu
+            cursor.close()
+            connection.close()
+            # Nếu số điện thoại đã tồn tại
+            if count > 0:
+                return 3  # Số điện thoại đã tồn tại
+            return result
+
+        def check_ngaysinh(ngay_sinh):
+            # Biểu thức chính quy để kiểm tra định dạng ngày tháng dd/mm/yyyy
+            regex = re.compile(r'^\d{2}/\d{2}/\d{4}$')
+
+            # Kiểm tra định dạng của ngày sinh
+            if not regex.match(ngay_sinh):
+                return 1  # Định dạng ngày sinh không đúng
+
+            # Tách ngày, tháng, năm từ chuỗi ngày sinh
+            day, month, year = map(int, ngay_sinh.split('/'))
+
+            # Kiểm tra năm nhuận
+            def is_leap_year(year):
+                if year % 4 == 0:
+                    if year % 100 == 0:
+                        if year % 400 == 0:
+                            return True
+                        else:
+                            return False
+                    else:
+                        return True
+                else:
+                    return False
+
+            # Số ngày trong tháng tương ứng
+            days_in_month = {
+                1: 31, 2: 29 if is_leap_year(year) else 28,
+                3: 31, 4: 30, 5: 31, 6: 30,
+                7: 31, 8: 31, 9: 30, 10: 31,
+                11: 30, 12: 31
+            }
+
+            # Kiểm tra ngày tháng năm có hợp lệ không
+            if month not in days_in_month:
+                return 2  # Tháng không hợp lệ
+            if day < 1 or day > days_in_month[month]:
+                return 3  # Ngày không hợp lệ
+
+            return 0
+
+        # Hàm kiểm tra thông tin trước khi cho phép chụp ảnh
+        def check_full_information(hoten, ngaysinh, sdt, gioitinh, chucvu, email):
+            if len(hoten) == 0 or len(ngaysinh) == 0 or len(sdt) == 0 or len(gioitinh) == 0 or len(chucvu) == 0 or len(email) == 0:
+                return 1
+            return 0
+        def button_chupanh():
+            ho_ten = text_ten.get()
+            ngay_sinh = text_ngaysinh.get()
+            so_dien_thoai = text_sdt.get()
+            gioi_tinh = combobox_gioitinh.get()
+            chuc_vu = combobox_chucvu.get()
+            email = text_email.get()
+
+            if len(ho_ten) == 0 or len(ngay_sinh) == 0 or len(so_dien_thoai) == 0 or len(gioi_tinh) == 0 or len(chuc_vu) == 0 or len(email) == 0:
+                messagebox.showinfo("Thông báo", "Vui lòng nhập đủ thông tin trước khi chụp ảnh")
+            else:
+                showHinhAnh()
+        # Hàm clear các textfield, combobox
         def button_clear():
             text_ten.delete(0, END)
             text_ngaysinh.delete(0, END)
@@ -191,14 +275,38 @@ def DangKyLayout(right_frame):
             chuc_vu = combobox_chucvu.get()
             email = text_email.get()
 
-            # Tạo mã nhân viên
-            ma_nv_global = taoMaNhanVien(chuc_vu, so_dien_thoai, gioi_tinh)
-            text_manv.config(state="normal")
-            text_manv.delete(0, END)
-            text_manv.insert(0, ma_nv_global)
-            text_manv.config(state="readonly")
+            if len(ho_ten) == 0 or len(ngay_sinh) == 0 or len(so_dien_thoai) == 0 or len(gioi_tinh) == 0 or len(chuc_vu) == 0 or len(email) == 0:
+                messagebox.showinfo("Thông báo", "Vui lòng nhập đủ thông tin")
 
+            elif check_sdt(so_dien_thoai) == 0 and check_ngaysinh(ngay_sinh) == 0:
+                # Tạo mã nhân viên
+                ma_nv_global = taoMaNhanVien(chuc_vu, so_dien_thoai, gioi_tinh)
+                text_manv.config(state="normal")
+                text_manv.delete(0, END)
+                text_manv.insert(0, ma_nv_global)
+                text_manv.config(state="readonly")
+            elif check_sdt(so_dien_thoai) == 1:
+                messagebox.showinfo("Thông báo", "Vui lòng nhập đủ 10 số")
+            elif check_sdt(so_dien_thoai) == 2:
+                messagebox.showinfo("Thông báo", "Số điện thoại chỉ chứa số")
+            elif check_sdt(so_dien_thoai) == 3:
+                messagebox.showinfo("Thông báo", "Số điện thoại đã tồn tại")
+            elif check_ngaysinh(ngay_sinh) == 1:
+                messagebox.showinfo("Thông báo", "Vui lòng nhập đúng định dạng dd/mm/yyyy")
+            elif check_ngaysinh(ngay_sinh) == 2:
+                messagebox.showinfo("Thông báo", "Tháng không hợp lệ")
+            elif check_ngaysinh(ngay_sinh) == 3:
+                messagebox.showinfo("Thông báo", "Ngày không hợp lệ")
+            elif check_ngaysinh(ngay_sinh) == 2 and check_ngaysinh(ngay_sinh) == 3:
+                messagebox.showinfo("Thông báo", "Ngày tháng không hợp lệ")
 
+        # nhập tên, chụp ảnh
+        label_Khung = LabelFrame(right_frame_dk, bg="white", borderwidth=5)
+        label_Khung.pack(pady=29)
+        label_hinhAnh = Label(label_Khung, bg="light gray", text="", width=50, height=30)
+        label_hinhAnh.pack()
+        btn_dangky = CTkButton(right_frame_dk, text="Chụp Ảnh", width=100, height=50, command=button_chupanh)
+        btn_dangky.pack()
 
         button_lammoi = CTkButton(left_frame_dk, text="Làm Mới", width=100, height=50, command=button_clear)
         button_lammoi.grid(row=7, column=0)
