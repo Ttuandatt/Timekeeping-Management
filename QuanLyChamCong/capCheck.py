@@ -71,6 +71,7 @@ def diemDanh(name):
                 dateString=leaveTime.strftime("%H:%M:%S")
                 if (leaveTime.time() > time_default.time()):
                     myDataList[vitri]=myDataList[vitri].rstrip("\n")+","+dateString+"\n"
+                    # xóa toàn bộ nội dung và add lại nội dung mới
                     fi.seek(0)
                     fi.truncate()
                     fi.writelines(myDataList)

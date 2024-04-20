@@ -30,7 +30,7 @@ def DangKyLayout(right_frame):
             cap = cv2.VideoCapture(0)
             dem = 0
             folderName=text_manv.get()
-            os.makedirs(f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}")
+            os.makedirs(f"QuanLyChamCong/imgCheck/{folderName}")
             while True:
                 ret, frame = cap.read()
                 frame = cv2.resize(frame, (350, 350))
@@ -40,7 +40,7 @@ def DangKyLayout(right_frame):
                 if count == 0:
                     if len(face_recognition.face_encodings(img1)) > 0:
                         img_name = f"{text_manv.get()}{dem}.png"
-                        cv2.imwrite(f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}/{img_name}",frame)
+                        cv2.imwrite(f"QuanLyChamCong/imgCheck/{folderName}/{img_name}",frame)
                         dem += 1
                         print("được")
                         # Lưu thông tin nhân viên vào cơ sở dữ liệu
@@ -54,7 +54,7 @@ def DangKyLayout(right_frame):
                     if len(face_recognition.face_encodings(img1)) > 0:
                         img_name = f"{text_manv.get()}{dem}.png"
                         cv2.imwrite(
-                            f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}/{img_name}",
+                            f"QuanLyChamCong/imgCheck/{folderName}/{img_name}",
                             frame)
                         dem += 1
                         print("được")
@@ -67,7 +67,8 @@ def DangKyLayout(right_frame):
 
             cap.release()
             cv2.destroyAllWindows()
-            img =  Image.open(f"C:/Users/ACER/Dropbox/My PC (LAPTOP-UGP9QJUT)/Documents/ITstudies/Python-main/QuanLyChamCong/imgCheck/{folderName}/{folderName}0.png")
+            messagebox.showinfo("Thông báo", "Đã đăng ký thành công ^^!")
+            img =  Image.open(f"QuanLyChamCong/imgCheck/{folderName}/{folderName}0.png")
             anhNV = ImageTk.PhotoImage(img)
 
 
@@ -75,36 +76,36 @@ def DangKyLayout(right_frame):
 
         # left_frame_dk chứa các thành phần để nhập thông tin nhân viên
         label_ten = Label(left_frame_dk, text="Họ Tên", font=("Arial", 15), background="white")
-        label_ten.grid(row=0, column=0, pady=30, padx=50, sticky="w")
-        text_ten = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
+        label_ten.grid(row=0, column=0, pady=23, padx=50, sticky="w")
+        text_ten = CTkEntry(left_frame_dk, font=("Arial", 15),fg_color="white",text_color="black",width=250, border_width=2)
         text_ten.grid(row=0, column=1)
         label_ngaysinh = Label(left_frame_dk, text="Ngày Sinh: ", font=("Arial", 15), background="white")
-        label_ngaysinh.grid(row=1,column=0, pady=30, padx=50, sticky="w")
-        text_ngaysinh = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
+        label_ngaysinh.grid(row=1,column=0, pady=23, padx=50, sticky="w")
+        text_ngaysinh = CTkEntry(left_frame_dk, font=("Arial", 15),fg_color="white",text_color="black",width=250, border_width=2)
         text_ngaysinh.grid(row=1,column=1)
         label_sdt = Label(left_frame_dk, text="Số Điện Thoại: ", font=("Arial", 15), background="white")
-        label_sdt.grid(row=2, column=0, pady=30, padx=50, sticky="w")
-        text_sdt = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
+        label_sdt.grid(row=2, column=0, pady=23, padx=50, sticky="w")
+        text_sdt = CTkEntry(left_frame_dk, font=("Arial", 15),fg_color="white",text_color="black",width=250, border_width=2)
         text_sdt.grid(row=2, column=1)
         label_gioitinh = Label(left_frame_dk, text="Giới Tính: ", font=("Arial", 15), background="white")
-        label_gioitinh.grid(row=3,column=0, pady=30, padx=50, sticky="w")
+        label_gioitinh.grid(row=3,column=0, pady=23, padx=50, sticky="w")
         value_gioitinh = ["Nam", "Nữ"]
         combobox_gioitinh = ttk.Combobox(left_frame_dk, values=value_gioitinh, font=("Arial", 15), background="white", state="readonly")
         combobox_gioitinh["width"] = 19
         combobox_gioitinh.grid(row=3, column=1)
         label_chucvu = Label(left_frame_dk, text="Chức Vụ: ", font=("Arial", 15), background="white")
-        label_chucvu.grid(row=4,column=0, pady=30, padx=50, sticky="w")
+        label_chucvu.grid(row=4,column=0, pady=23, padx=50, sticky="w")
         value_chucvu = ["Quản lý", "Nhân viên", "Thực tập"]
         combobox_chucvu = ttk.Combobox(left_frame_dk, values=value_chucvu, font=("Arial", 15), background="white", state="readonly")
         combobox_chucvu["width"] = 19
         combobox_chucvu.grid(row=4, column=1)
         label_email = Label(left_frame_dk, text="Email: ", font=("Arial", 15), background="white")
-        label_email.grid(row=5, column=0, pady=30, padx=50, sticky="w")
-        text_email = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3)
+        label_email.grid(row=5, column=0, pady=23, padx=50, sticky="w")
+        text_email = CTkEntry(left_frame_dk, font=("Arial", 15),fg_color="white",text_color="black",width=250, border_width=2)
         text_email.grid(row=5, column=1)
         label_manv = Label(left_frame_dk, text="Mã NV: ", font=("Arial", 15), background="white")
-        label_manv.grid(row=6, column=0, pady=30, padx=50, sticky="w")
-        text_manv = Entry(left_frame_dk, font=("Arial", 15), background="white", borderwidth=3, state="readonly")
+        label_manv.grid(row=6, column=0, pady=23, padx=50, sticky="w")
+        text_manv = CTkEntry(left_frame_dk, font=("Arial", 15),fg_color="white",text_color="black",width=250, border_width=2, state="readonly")
         text_manv.grid(row=6, column=1)
 
 
@@ -125,7 +126,7 @@ def DangKyLayout(right_frame):
             connection = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="123456",
+                password="dora1808",
                 database="qlchamcong"
             )
             cursor = connection.cursor()
@@ -177,7 +178,7 @@ def DangKyLayout(right_frame):
             connection = mysql.connector.connect(
                 host = "localhost",
                 user = "root",
-                password = "123456",
+                password = "dora1808",
                 database = "qlchamcong"
             )
             cursor = connection.cursor()
@@ -252,6 +253,7 @@ def DangKyLayout(right_frame):
                 messagebox.showinfo("Thông báo", "Vui lòng nhập đủ thông tin trước khi chụp ảnh")
             else:
                 showHinhAnh()
+                button_clear()
         # Hàm clear các textfield, combobox
         def button_clear():
             text_ten.delete(0, END)
@@ -260,9 +262,9 @@ def DangKyLayout(right_frame):
             text_email.delete(0, END)
             global ma_nv_global  # Sử dụng biến toàn cục
             ma_nv_global = ""  # Xóa mã nhân viên để tạo lại khi nhấn nút làm mới
-            text_manv.config(state="normal")
+            text_manv.configure(state="normal")
             text_manv.delete(0, END)
-            text_manv.config(state="readonly")
+            text_manv.configure(state="readonly")
             combobox_chucvu.set('')
             combobox_gioitinh.set('')
 
@@ -281,10 +283,10 @@ def DangKyLayout(right_frame):
             elif check_sdt(so_dien_thoai) == 0 and check_ngaysinh(ngay_sinh) == 0:
                 # Tạo mã nhân viên
                 ma_nv_global = taoMaNhanVien(chuc_vu, so_dien_thoai, gioi_tinh)
-                text_manv.config(state="normal")
+                text_manv.configure(state="normal")
                 text_manv.delete(0, END)
                 text_manv.insert(0, ma_nv_global)
-                text_manv.config(state="readonly")
+                text_manv.configure(state="readonly")
             elif check_sdt(so_dien_thoai) == 1:
                 messagebox.showinfo("Thông báo", "Vui lòng nhập đủ 10 số")
             elif check_sdt(so_dien_thoai) == 2:

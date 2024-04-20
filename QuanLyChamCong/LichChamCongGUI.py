@@ -129,23 +129,27 @@ def themKyCong(right_frame,my_tree):
 
 def xoaKyCong(my_tree):
     selection = my_tree.selection()
-    kycong=my_tree.item(selection[0],'values')
-    kq=messagebox.askyesno("Thông báo","Bạn chắc chắn muốn xóa chứ ?")
-    if(kq):
-        mydatabase=mysql.connector.connect(user='root',password='dora1808',host='localhost',database="qlchamcong")
-        mycursor=mydatabase.cursor()
-        sql="Update kycong Set TrangThai=%s Where MaKyCong=%s"
-        mycursor.execute(sql,('1',kycong[1]))
-        mydatabase.commit()
-        loadDuLieuGoc(my_tree)
-        mycursor.close()
+    print(selection)
+    if ( selection==()):
+        messagebox.showinfo("Thông báo", "Vui lòng chọn kì công cần xóa!")
+    else:   
+        kycong=my_tree.item(selection[0],'values')
+        kq=messagebox.askyesno("Thông báo","Bạn chắc chắn muốn xóa chứ ?")
+        if(kq):
+            mydatabase=mysql.connector.connect(user='root',password='dora1808',host='localhost',database="qlchamcong")
+            mycursor=mydatabase.cursor()
+            sql="Update kycong Set TrangThai=%s Where MaKyCong=%s"
+            mycursor.execute(sql,('1',kycong[1]))
+            mydatabase.commit()
+            loadDuLieuGoc(my_tree)
+            mycursor.close()
 
 
 
 def LichChamCongLayout(right_frame):
     # chia làm 2 là chức năng + tìm kiếm ở trên, table ở dưới
-    ChucNangChamCong=Frame(right_frame,background="white",height=150,width=1300)
-    DuLieuChamCong=Frame(right_frame,background="white",height=600,width=1300)
+    ChucNangChamCong=LabelFrame(right_frame,background="white",height=150,width=1300)
+    DuLieuChamCong=LabelFrame(right_frame,background="white",height=600,width=1300)
     ChucNangChamCong.grid(row=0,column=0,sticky="nsew")
     DuLieuChamCong.grid(row=1,column=0,sticky="nsew")
     right_frame.grid_columnconfigure(0, weight=1)
@@ -166,8 +170,8 @@ def LichChamCongLayout(right_frame):
     timKiem.pack(padx=10,pady=20,side="left")
     
 
-    btn_ThemKyCong=CTkButton(ChucNangChamCong,text="Kì Công Mới",font=("Arial", 14),fg_color="#4158D0",text_color="white",width=150,height=50,border_width=2,command=lambda: themKyCong(right_frame,my_tree))
-    btn_XoaKyCong=CTkButton(ChucNangChamCong,text="Xóa",font=("Arial", 14),fg_color="white",text_color="#FE6D73",width=100,height=50,border_width=2,command=lambda: xoaKyCong(my_tree))
+    btn_ThemKyCong=CTkButton(ChucNangChamCong,text="Kì Công Mới",font=("Arial", 14),fg_color="#4158D0",hover_color="#00BFFF",text_color="white",width=150,height=50,border_width=2,command=lambda: themKyCong(right_frame,my_tree))
+    btn_XoaKyCong=CTkButton(ChucNangChamCong,text="Xóa",font=("Arial", 14),fg_color="white",text_color="red",hover_color="#FE6D73",width=100,height=50,border_width=2,command=lambda: xoaKyCong(my_tree))
     btn_XoaKyCong.pack(padx=10,pady=20,side="right")
     btn_ThemKyCong.pack(padx=10,pady=20,side="right")
 
@@ -177,7 +181,7 @@ def LichChamCongLayout(right_frame):
     style.configure("Treeview.Heading",rowheight=50, font=("Arial", 14)) 
     style.configure("Treeview", rowheight=50,font=("Arial",14))
     tree_frame=Frame(DuLieuChamCong)
-    tree_frame.pack()
+    tree_frame.pack(fill="both", expand=True)
     my_tree=ttk.Treeview(tree_frame) 
     my_tree.grid(row=0,column=0)
 

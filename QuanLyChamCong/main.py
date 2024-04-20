@@ -6,7 +6,7 @@ from customtkinter import *
 import time, face_recognition, cv2 
 import capCheck
 import numpy as np
-import DangKyGUI, QuanLyGUI,LichChamCongGUI, ThongKeGUI # import các giao diện
+import DangKyGUI, QuanLyGUI,LichChamCongGUI, ThongKeGUI, ThongTinDiemDanh # import các giao diện
 
 
 def canGiuaCuaSo(window,width,height):
@@ -25,8 +25,7 @@ def clock(frame):
         day = time.strftime("%d") + "/" + time.strftime("%m") + "/" + time.strftime("%Y")
         clock_label.config(text=hour + ":" + minute + ":" + second + "\t" + day)
         frame.after(1000, update_clock)
-
-    clock_label = Label(frame, text="", font=("Arial", 14), bg="white")
+    clock_label = Label(frame, text="", font=("Arial", 14), bg="light gray")
     clock_label.pack(anchor="w")
     update_clock()
 
@@ -124,16 +123,16 @@ def Main_Window(login_window):
     window = Toplevel(login_window)
     window.title("Quản Lý Chấm Công")
     window_width=1500
-    window_height=900
+    window_height=800
     window.resizable(width=False,height=False)
     window.geometry(f"{window_width}x{window_height}")
 
     #canGiuaCuaSo(window,window_width,window_height)
 
     # frame tiêu đề top, frame navigation trái, frame nội dung phải
-    top_frame = Frame(window,bg="light gray",width=window_width,height=150)
-    left_frame = Frame(window, bg="light blue", width=300, height=750)
-    right_frame = Frame(window, bg="white", width=1300, height=750)
+    top_frame = Frame(window,bg="light gray",width=window_width,height=100)
+    left_frame = Frame(window, bg="light blue", width=300, height=700)
+    right_frame = Frame(window, bg="white", width=1300, height=700)
 
     top_frame.grid(row=0,column=0,columnspan=2,sticky="nsew")
     left_frame.grid(row=1, column=0, sticky="nsew")
@@ -145,8 +144,8 @@ def Main_Window(login_window):
     window.grid_rowconfigure(1, weight=4)
     # frame trên thời gian và tiêu đề
     clock(top_frame)
-    label_tieude=Label(top_frame,text="Hệ Thống Quản Lý Chấm Công",font=("Arial",20),bg="light gray")
-    label_tieude.pack(pady=10)
+    label_tieude=Label(top_frame,text="Hệ Thống Quản Lý Chấm Công",font=("Arial",18,"bold"),foreground="black",background="light gray")
+    label_tieude.pack(pady=5)
 
 
     # frame giữa - trái là MenuTask
@@ -154,6 +153,8 @@ def Main_Window(login_window):
         if( event=="Đăng Xuất"):    
             window.withdraw()
             login_window.deiconify()
+        elif (event=="Điểm Danh"):
+            giaoDienDiemDanh()
         elif (event=="Nhân Viên Mới"):
             giaoDienDangKy()
         elif( event=="Quản Lý Nhân Viên"):
@@ -163,19 +164,29 @@ def Main_Window(login_window):
         elif( event=="Thống Kê"):
             giaoDienThongKe()
             # tạo button trái Task
+    diemdanh_btn=CTkButton(left_frame,text="Điểm Danh",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/diemdanh.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Điểm Danh"))
     dangky_btn=CTkButton(left_frame,text="Nhân Viên Mới",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/thongtin.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Nhân Viên Mới"))
     qlnhanvien_btn=CTkButton(left_frame,text="Quản Lý Nhân Viên",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/taikhoan.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Quản Lý Nhân Viên"))
     thongke_btn=CTkButton(left_frame,text="Thống Kê",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/thongke.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Thống Kê"))
     chamcong_btn=CTkButton(left_frame,text="Lịch Chấm Công",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/chamcong.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Lịch Chấm Công"))
     dangxuat_btn=CTkButton(left_frame,text="Đăng Xuất",width=200,height=60,image=CTkImage(Image.open("QuanLyChamCong/img/dangxuat.png"),size=(50,50)),anchor="w",command=lambda :EventButtonClick("Đăng Xuất"))
+    diemdanh_btn.pack(pady=10,padx=20)
     dangky_btn.pack(pady=10,padx=20)
     qlnhanvien_btn.pack(pady=10,padx=20)
     thongke_btn.pack(pady=10,padx=20)
     chamcong_btn.pack(pady=10,padx=20)
-    dangxuat_btn.pack(pady=100,padx=20)
-    
+    dangxuat_btn.pack(pady=80,padx=20)
+    right_frame.grid_propagate(False)
+    ThongTinDiemDanh.ThongTinDiemDanhLayout(right_frame)    
 
     # Giao diện phải
+    def giaoDienDiemDanh():
+        for widget in right_frame.winfo_children():
+            widget.destroy()
+        right_frame.grid_propagate(False)
+        ThongTinDiemDanh.ThongTinDiemDanhLayout(right_frame)
+
+
     def giaoDienDangKy():
         # thông tin nhân viên + chụp hình + lưu
         for widget in right_frame.winfo_children():
