@@ -1,12 +1,12 @@
-import datetime
+import os
 import re
 from tkinter import *
 from tkinter import messagebox, ttk
-
 import database_manager
 import numpy as np
 from customtkinter import *
 from PIL import Image, ImageTk
+from tkcalendar import DateEntry
 
 
 def QuanLyLayout(right_frame):
@@ -45,7 +45,7 @@ def QuanLyLayout(right_frame):
     table['column'] = ("Mã nhân viên", "Họ tên", "Ngày sinh", "Số điện thoại", "Giới tính", "Chức vụ", "Email")
     table.column("#0", width=0, stretch=NO)
     table.column("Mã nhân viên", anchor=CENTER, width=140)
-    table.column("Họ tên", anchor=W, width=160)
+    table.column("Họ tên", anchor=CENTER, width=160)
     table.column("Ngày sinh", anchor=CENTER, width=120)
     table.column("Số điện thoại", anchor=CENTER, width=140)
     table.column("Giới tính", anchor=CENTER, width=100)
@@ -78,8 +78,8 @@ def QuanLyLayout(right_frame):
 
         selected = table.focus()
         values = table.item(selected, 'values')
-
-        text_manv.insert(0, values[0]) 
+        
+        text_manv.insert(0, values[0])
         text_manv.configure(state="readonly")
         text_ten.insert(0, values[1])
         text_ngaysinh.insert(0, values[2])
@@ -87,7 +87,6 @@ def QuanLyLayout(right_frame):
         text_email.insert(0, values[6])
         cb_gioitinh.set(values[4])
         cb_chucvu.set(values[5])
-        #img_record = values[7]
 
     def btnQuery():
         dbManager = database_manager.DatabaseManager()
@@ -133,8 +132,10 @@ def QuanLyLayout(right_frame):
             dbManager.closeConnection()
         else:
             print("Kết nối thất bại!")
+        btnLamMoi()  
     
     def btnXemTatCa():
+        btnLamMoi()
         table.delete(*table.get_children())
         btnQuery()
 
@@ -168,8 +169,9 @@ def QuanLyLayout(right_frame):
 
     lb_ngaysinh = CTkLabel(info_frame, text="Ngày sinh", font=("Helvetica", 16),text_color="black")
     lb_ngaysinh.grid(row=3, column=0,padx=5, pady=10, stick="w")
-    text_ngaysinh = CTkEntry(info_frame, font=("Helvetica", 15), width=150, corner_radius=20, text_color="black", border_width=2,fg_color="white")
+    text_ngaysinh = DateEntry(info_frame, width=16, date_pattern='yyyy-mm-dd', font=("Helvetica", 10))
     text_ngaysinh.grid(row=3, column=1, pady=10)
+    text_ngaysinh.delete(0, END)
 
     lb_sdt = CTkLabel(info_frame, text="Số điện thoại", font=("Helvetica", 16),text_color="black")
     lb_sdt.grid(row=4, column=0,padx=5, pady=10, stick="w")
@@ -193,10 +195,8 @@ def QuanLyLayout(right_frame):
     text_email = CTkEntry(info_frame, font=("Helvetica", 15), width=150, corner_radius=20, text_color="black", border_width=2,fg_color="white")
     text_email.grid(row=7, column=1, pady=10)
 
-
-    #img_record =  Image()
-
     def btnLamMoi():
+        text_manv.configure(state="normal")
         text_manv.delete(0, END)
         text_ten.delete(0, END)
         text_ngaysinh.delete(0, END)
@@ -205,6 +205,20 @@ def QuanLyLayout(right_frame):
         cb_chucvu.set(' ')
         cb_gioitinh.set(' ')
 
+     def ktraSdt(sdt):
+        regex = r'^0\d{9}$'
+        if(re.fullmatch(regex, sdt)):
+            return TRUE
+        else:
+            return FALSE
+
+    def ktraEmail(email):
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+        if(re.fullmatch(regex, email)):
+            return TRUE
+        else:
+            return FALSE
+            
     def btnCapNhat():
         selected = table.focus()
         table.item(selected, values=(text_manv.get()))
@@ -215,22 +229,45 @@ def QuanLyLayout(right_frame):
         gioitinh = cb_gioitinh.get()
         chucvu = cb_chucvu.get()
         email = text_email.get()
-        if (selected=="" or manv=="" or ten=="" or ngaysinh=="" or sdt=="" or gioitinh=="" or chucvu=="" or email==""):
+        if (selected=="" or manv==""):
             messagebox.showinfo("Thông báo", "Vui lòng chọn nhân viên!")
         else:
-            dbManager = database_manager.DatabaseManager()
-            if dbManager.openConnection():
-                dbManager.updateNhanVien(manv, ten, ngaysinh, sdt, gioitinh, chucvu, email)
-                dbManager.closeConnection()
+            if (ten=="" or ngaysinh=="" or sdt=="" or gioitinh=="" or chucvu=="" or email==""):
+                messagebox.showinfo("Thông báo", "Vui lòng nhập đủ thông tin")
             else:
-                print("Kết nối thất bại!")
-            btnLamMoi()
+                if (ktraEmail(email)==FALSE or ktraSdt(sdt)==FALSE):
+                    messagebox.showinfo("Thông báo", "Vui lòng nhập đúng định dạng")
+                else:
+                    dbManager = database_manager.DatabaseManager()
+                    if dbManager.openConnection():
+                        dbManager.updateNhanVien(manv, ten, ngaysinh, sdt, gioitinh, chucvu, email)
+                        dbManager.closeConnection()
+                    else:
+                        print("Kết nối thất bại!")
+                    btnLamMoi()
+                    table.delete(*table.get_children())
+                    btnQuery()
+        
+    def btnXoa():
+        selected = table.focus()
+        table.item(selected, text="", values=(text_manv.get()))
+        manv = text_manv.get()
+        if (selected=="" or manv==""):
+            messagebox.showinfo("Thông báo", "Vui lòng chọn nhân viên!")
+        else: 
+            kq=messagebox.askyesno("Thông báo","Bạn chắc chắn muốn xóa chứ?")
+            if(kq):
+                dbManager = database_manager.DatabaseManager()
+                if dbManager.openConnection():
+                    dbManager.deleteNhanVien(manv)
+                    dbManager.closeConnection()
+                else:
+                    print("Kết nối thất bại!")
+                btnLamMoi()
         table.delete(*table.get_children())
         btnQuery()
-        
-            
 
-    def btnXoa():
+    def btnXemAnh():
         selected = table.focus()
         table.item(selected, text="", values=(text_manv.get()))
         manv = text_manv.get()
@@ -239,18 +276,21 @@ def QuanLyLayout(right_frame):
         else: 
             dbManager = database_manager.DatabaseManager()
             if dbManager.openConnection():
-                dbManager.deleteNhanVien(manv)
+                nhanvien = dbManager.selectNhanVien()
+                for nv in nhanvien:
+                    if manv in nv[0]:
+                        folder_path = (f"D:/ThucHanh_python/DoAn/QuanLyChamCong/imgCheck/{manv}")
+                        if os.path.exists(folder_path):
+                            os.startfile(folder_path)
+                        else: 
+                            messagebox.showinfo("Thông báo", "Thư mục ảnh không tồn tại!")
                 dbManager.closeConnection()
             else:
                 print("Kết nối thất bại!")
-            btnLamMoi()
         table.delete(*table.get_children())
         btnQuery()
 
-    def btnXemAnh():
-        pass
-
-    
+    #button
     button_capnhat = CTkButton(info_frame, text="Cập nhật", corner_radius=30, border_width=2,
                                border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnCapNhat )
     button_capnhat.grid(row=8, column=1)
