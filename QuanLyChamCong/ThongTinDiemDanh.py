@@ -1,7 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter import messagebox
-from datetime import datetime
 from datetime import timedelta
 from customtkinter import *
 import numpy as np

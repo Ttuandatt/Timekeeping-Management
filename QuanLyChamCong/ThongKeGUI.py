@@ -1,11 +1,7 @@
-
 from tkinter import *
 from tkinter import ttk
-from tkinter import messagebox
-from PIL import ImageTk, Image
 from datetime import datetime, timedelta
 from customtkinter import *
-import face_recognition, cv2
 import numpy as np
 import database_manager
 
@@ -70,7 +66,7 @@ def ThongKeLayout(right_frame):
     lb_datadayoff.grid(row=6,column=1,padx=5,pady=10,)
 
     # Right frame
-    thongkeoption_frame = LabelFrame(right_fr, background="yellow", width=800, height=200)
+    thongkeoption_frame = LabelFrame(right_fr, background="white", width=800, height=200)
     thongkeoption_frame.pack(fill="both", expand=True)
     thongkecontent_frame = LabelFrame(right_fr, width=800, height=500)
     thongkecontent_frame.pack(fill="both", expand=True)
@@ -190,7 +186,7 @@ def giocongtrungbinh():
                 workhours = 0
         else:
             workhours = None
-        return round(workhours / total_employee,3)
+        return round(workhours / total_employee,2)
 
     else:
         print("Kết nối thất bại!")
@@ -225,7 +221,7 @@ def giocongOT():
                 total_overtime_hours = 0
         else:
             total_overtime_hours = None
-        return total_overtime_hours
+        return round(total_overtime_hours,2)
     else:
         return None
 
@@ -255,7 +251,7 @@ def giocongthang():
             workhours = worksecond / 3600
         else:
             workhours = None
-        return round(workhours,3)
+        return round(workhours,2)
     else:
         print("Kết nối thất bại!")
         return None

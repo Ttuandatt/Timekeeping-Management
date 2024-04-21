@@ -1,9 +1,8 @@
 from tkinter import *
-from tkinter import ttk
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from customtkinter import *
-import time, face_recognition, cv2 
+import time
 import capCheck
 import numpy as np
 import DangKyGUI, QuanLyGUI,LichChamCongGUI, ThongKeGUI, ThongTinDiemDanh # import các giao diện

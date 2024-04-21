@@ -160,6 +160,7 @@ GROUP BY
                 print("condition 2")
                 cursor.execute(
                     """
+            SET sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
             SELECT CNV.MaKyCong, 
                    CNV.MaNV, 
                    NV.HoTen, 

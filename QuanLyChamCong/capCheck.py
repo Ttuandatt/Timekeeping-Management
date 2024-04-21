@@ -1,7 +1,5 @@
-import cv2
+import cv2, os, time
 import face_recognition
-import os
-import time
 import numpy as np
 from tkinter import *
 from datetime import datetime
@@ -65,7 +63,7 @@ def diemDanh(name):
             vitri=nameList.index(name)
             check=myDataList[vitri].split(",")
             if len(check) <3:
-                time_default="02:11:00"
+                time_default="16:00:00"
                 time_default=datetime.strptime(time_default,"%H:%M:%S")
                 leaveTime=datetime.now()
                 dateString=leaveTime.strftime("%H:%M:%S")
@@ -77,9 +75,9 @@ def diemDanh(name):
                     fi.writelines(myDataList)
                     return 2, dateString
                 else: 
-                    return 0,"Chưa tới giờ điểm danh !!!"
+                    return 0,"Chưa tới giờ điểm danh!!"
             else:
-                return 0,"Bạn đã điểm danh xong rồi !!!"
+                return 0,"Bạn đã điểm danh rồi!!"
 
 
 
