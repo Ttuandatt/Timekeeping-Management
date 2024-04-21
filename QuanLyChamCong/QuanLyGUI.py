@@ -387,7 +387,7 @@ def QuanLyLayout(right_frame):
                 for kc in kycong_ct:
                     for j in range(3, 3+soNgayCong):
                         if kc[j]=="":
-                            values_ngay += ["Day "+str(j-2)]    
+                            values_ngay += ["Day"+str(j-2)]    
                 dbManager.closeConnection()
             else:
                 print("Kết nối thất bại!")
