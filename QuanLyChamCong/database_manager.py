@@ -87,6 +87,43 @@ class DatabaseManager:
             messagebox.showinfo("Thông báo", "Cập nhật thành công")
         except Exception as e:
             messagebox.showinfo("Thông báo", "Cập nhật thất bại")
+            
+    def selectKyCongChiTiet(self, manv, makc):
+        try:
+            cursor = self.con.cursor()
+            query = "SELECT * FROM `KyCongChiTiet` WHERE `MaNV`=%s and `MaKyCong`=%s"
+            cursor.execute(query, (manv, makc))
+            kq = cursor.fetchall()
+            cursor.close()
+            return kq
+        except Exception as e:
+            print(e)
+            return None
+        
+    def selectSoNgayCong(self, makc):
+        try:
+            cursor = self.con.cursor()
+            query = "SELECT `SoNgayCong` FROM `KyCong` WHERE `MaKyCong` = %s"
+            cursor.execute(query, (makc,))
+            kq = cursor.fetchone()[0]
+            cursor.close()
+            return kq
+        except Exception as e:
+            print(e)
+            return None
+    
+    def updateNgayCong(self, ngay, suaLai, makc, manv):
+        try:
+            cursor = self.con.cursor()
+            update_query = "UPDATE `KyCongChiTiet` SET `{}`= %s WHERE `MaKyCong`=%s and `MaNV`=%s"
+            query = update_query.format(ngay)
+            values = (suaLai, makc, manv)
+            cursor.execute(query, values)
+            self.con.commit()
+            cursor.close()
+            messagebox.showinfo("Thông báo", "Cập nhật thành công")
+        except Exception as e:
+            messagebox.showinfo("Thông báo", "Cập nhật thất bại")
 
 # Sử dụng:
 db_manager = DatabaseManager()
