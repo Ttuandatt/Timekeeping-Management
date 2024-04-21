@@ -7,7 +7,7 @@ import numpy as np
 from customtkinter import *
 from PIL import Image, ImageTk
 from tkcalendar import DateEntry
-
+from datetime import datetime
 
 def QuanLyLayout(right_frame):
 
@@ -317,7 +317,7 @@ def QuanLyLayout(right_frame):
             # Tạo cửa sổ con (Toplevel) để hiển thị thông tin kỳ công chi tiết
             top = Toplevel()
             top.title("Kỳ công chi tiết") #của nhân viên {manv} tháng " + currMonth + "/" + currYear)
-            top.geometry("1300x300")
+            top.geometry("1600x300")
 
             edit_frame = LabelFrame(top, text="Chỉnh sửa kỳ công", font=("Helvetica", 10))
             edit_frame.pack(pady=10)
@@ -328,15 +328,15 @@ def QuanLyLayout(right_frame):
 
 
             style = ttk.Style()
-            style.theme_use("default")
-            style.configure("Treeview", rowheight=30)    
-
+            style.configure("Treeview", rowheight=75)    
+            style.configure("Treeview", font=("Helvetica", 10))
+            style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))
             # Tạo bảng (table) để hiển thị thông tin kỳ công chi tiết 
             tbscrollx = Scrollbar(kycong_frame, orient="horizontal")
             tbscrollx.pack(fill="x", side=BOTTOM)
             kycong_table = ttk.Treeview(kycong_frame, xscrollcommand=tbscrollx, selectmode="extended")
             kycong_table.pack(pady=10)
-            tbscrollx.config(command=table.xview)
+            tbscrollx.config(command=kycong_table.xview)
             
             kycong_table['columns'] = ("Mã kỳ công",) 
             for i in range(soNgayCong):
@@ -368,6 +368,7 @@ def QuanLyLayout(right_frame):
                             duLieu = duLieu + (kc[i],)
                             if kc[i]=='X' or kc[i]=='+' or kc[i]=='P':
                                 ngayCong += 1
+                        dbManager.capNhatNgayCong(makc,manv,ngayCong)
                         duLieu = duLieu + (str(ngayCong),)
                     kycong_table.insert("", END, values=duLieu)
                     dbManager.closeConnection()
