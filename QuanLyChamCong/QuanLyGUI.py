@@ -364,7 +364,7 @@ def QuanLyLayout(right_frame):
                     ngayCong = 0
                     for kc in kycong_ct:
                         duLieu = (kc[0],)
-                        for i in range(3, 4+soNgayCong):
+                        for i in range(3, 3+soNgayCong):
                             duLieu = duLieu + (kc[i],)
                             if kc[i]=='X' or kc[i]=='+' or kc[i]=='P':
                                 ngayCong += 1
@@ -377,44 +377,54 @@ def QuanLyLayout(right_frame):
 
             docDuLieu()
 
-            lb = Label(edit_frame, text="Chọn ngày công cần chỉnh sửa: ", font=("Helvetica", 10), foreground="red")
+            lb = Label(edit_frame, text="Chọn ngày công nhân viên xin nghỉ có phép: ", font=("Helvetica", 10), foreground="red")
             lb.grid(row=0, column=0, padx=5, pady=10)
             values_ngay = []
-            for i in range(1, soNgayCong+1):
-                values_ngay += ["Day"+str(i)]
+            dbManager = database_manager.DatabaseManager()
+            if dbManager.openConnection():
+                kycong_ct = dbManager.selectKyCongChiTiet(manv, makc)
+                soNgayCong = dbManager.selectSoNgayCong(makc)
+                for kc in kycong_ct:
+                    for j in range(3, 3+soNgayCong):
+                        if kc[j]=="":
+                            values_ngay += ["Day "+str(j-2)]    
+                dbManager.closeConnection()
+            else:
+                print("Kết nối thất bại!")
             cb_ngay = ttk.Combobox(edit_frame, values= values_ngay, font=("Arial", 10))
             cb_ngay.grid(row=0, column=1, padx=5, pady=10)
 
-            lb_sua = Label(edit_frame, text="Sửa thành: ", font=("Helvetica", 10), foreground="red")
+            '''lb_sua = Label(edit_frame, text="Sửa thành: ", font=("Helvetica", 10), foreground="red")
             lb_sua.grid(row=0, column=2, padx=15, pady=10)
             value_sua = ["Nghỉ có phép (P)", "Đi làm đủ (X)", "Làm nửa ngày (+)"]
             cb_sua = ttk.Combobox(edit_frame, values= value_sua, font=("Arial", 10))
-            cb_sua.grid(row=0, column=3, padx=15, pady=10)
+            cb_sua.grid(row=0, column=3, padx=15, pady=10)'''
 
             def btncapnhat():
                 selected = kycong_table.focus()
                 kycong_table.item(selected, 'values')
                 ngay = cb_ngay.get()
-                sua = cb_sua.get()
-                if ngay=="" or sua=="":
-                    messagebox.showinfo("Thông báo", "Vui lòng chọn thông tin cập nhập!")
+                #sua = cb_sua.get()
+                if ngay=="":
+                    messagebox.showinfo("Thông báo", "Vui lòng chọn ngày công!")
                 else:
-                    if sua=="Nghỉ có phép (P)":
+                    '''if sua=="Nghỉ có phép (P)":
                         suaLai="P"
                     elif sua=="Đi làm đủ (X)":
                         suaLai="X"
                     elif sua=="Làm nửa ngày (+)":
-                        suaLai="+"
+                        suaLai="+"'''
+                    
                     dbManager = database_manager.DatabaseManager()
                     if dbManager.openConnection():
-                        dbManager.updateNgayCong(ngay, suaLai, makc, manv)
+                        dbManager.updateNgayCong(ngay, makc, manv)
                         dbManager.closeConnection()
                     else:
                         print("Kết nối thất bại!")
                     kycong_table.delete(*kycong_table.get_children())
                     docDuLieu()
                     cb_ngay.set(' ')
-                    cb_sua.set(' ')
+                    #cb_sua.set(' ')
 
             button_CapNhat = CTkButton(edit_frame, text="Cập nhật", corner_radius=30, border_width=2,
                               border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 12), command=btncapnhat)
