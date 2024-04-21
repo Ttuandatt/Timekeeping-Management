@@ -80,18 +80,19 @@ class DatabaseManager:
             print(e)
             return None
 
-    def updateNgayCong(self, ngay, suaLai, makc, manv):
+    def updateNgayCong(self, ngay, makc, manv):
         try:
             cursor = self.con.cursor()
-            update_query = "UPDATE `KyCongChiTiet` SET `{}`= %s WHERE `MaKyCong`=%s and `MaNV`=%s"
+            update_query = "UPDATE `KyCongChiTiet` SET `{}`= 'P' WHERE `MaKyCong`=%s and `MaNV`=%s"
             query = update_query.format(ngay)
-            values = (suaLai, makc, manv)
+            values = (makc, manv)
             cursor.execute(query, values)
             self.con.commit()
             cursor.close()
             messagebox.showinfo("Thông báo", "Cập nhật thành công")
         except Exception as e:
             messagebox.showinfo("Thông báo", "Cập nhật thất bại")
+
 
     def capNhatNgayCong(self,makc,manv,ngayCong):
         cursor = self.con.cursor()
