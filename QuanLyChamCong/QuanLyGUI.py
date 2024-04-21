@@ -286,14 +286,146 @@ def QuanLyLayout(right_frame):
                 print("Kết nối thất bại!")
         table.delete(*table.get_children())
         btnQuery()
+        
+    def btnKyCong():
+        # Lấy dòng được chọn từ bảng chính
+        selected = table.focus()
+        values = table.item(selected, 'values')
 
+        if selected == "" or not values:
+            # Nếu không có dòng nào được chọn, hiển thị thông báo
+            messagebox.showinfo("Thông báo", "Vui lòng chọn nhân viên!")
+        else:
+            # Lấy mã nhân viên từ dòng được chọn
+            manv = values[0]
+            # Ki cong hien tai 
+            currMonth = str(datetime.now().month)
+            currYear = str(datetime.now().year)
+            if len(str(currMonth))==1: 
+                currMonth = "0" + currMonth
+            makc = "KC" + currMonth + currYear
+
+            # Kết nối cơ sở dữ liệu và truy vấn dữ liệu từ bảng KyCongChiTiet
+            dbManager = database_manager.DatabaseManager()
+            if dbManager.openConnection():
+                kycong_ct = dbManager.selectKyCongChiTiet(manv, makc)
+                soNgayCong = dbManager.selectSoNgayCong(makc)
+                dbManager.closeConnection()
+            else:
+                print("Kết nối thất bại!")
+
+            # Tạo cửa sổ con (Toplevel) để hiển thị thông tin kỳ công chi tiết
+            top = Toplevel()
+            top.title("Kỳ công chi tiết") #của nhân viên {manv} tháng " + currMonth + "/" + currYear)
+            top.geometry("1300x300")
+
+            edit_frame = LabelFrame(top, text="Chỉnh sửa kỳ công", font=("Helvetica", 10))
+            edit_frame.pack(pady=10)
+            
+            # Tạo một LabelFrame để chứa bảng hiển thị thông tin kỳ công chi tiết
+            kycong_frame = LabelFrame(top, text=(f"Kỳ công chi tiết của nhân viên {manv} tháng " + currMonth + "/" + currYear), font=("Helvetica", 10), height=60)
+            kycong_frame.pack(pady=20)
+
+
+            style = ttk.Style()
+            style.theme_use("default")
+            style.configure("Treeview", rowheight=30)    
+
+            # Tạo bảng (table) để hiển thị thông tin kỳ công chi tiết 
+            tbscrollx = Scrollbar(kycong_frame, orient="horizontal")
+            tbscrollx.pack(fill="x", side=BOTTOM)
+            kycong_table = ttk.Treeview(kycong_frame, xscrollcommand=tbscrollx, selectmode="extended")
+            kycong_table.pack(pady=10)
+            tbscrollx.config(command=table.xview)
+            
+            kycong_table['columns'] = ("Mã kỳ công",) 
+            for i in range(soNgayCong):
+                kycong_table["columns"] +=  (("Day " + str(i+1)),)
+            kycong_table["columns"] += ("Số ngày công",)
+
+            kycong_table.heading("#0", text="", anchor=CENTER)
+            kycong_table.heading("Mã kỳ công", text="Mã kỳ công", anchor=CENTER)
+            for i in range(soNgayCong):
+                kycong_table.heading(("Day " + str(i+1)), text=("Day " + str(i+1)), anchor=CENTER)
+            kycong_table.heading("Số ngày công", text="Số ngày công", anchor=CENTER)
+
+            kycong_table.column("#0", width=0, stretch=NO)
+            kycong_table.column("Mã kỳ công", anchor=CENTER, width=70)
+            for i in range(soNgayCong):
+                kycong_table.column(("Day " + str(i+1)), anchor=CENTER, width=50)
+            kycong_table.column("Số ngày công", anchor=CENTER, width=70)
+            
+            # Đặt dữ liệu kỳ công chi tiết vào bảng
+            def docDuLieu():
+                dbManager = database_manager.DatabaseManager()
+                if dbManager.openConnection():
+                    kycong_ct = dbManager.selectKyCongChiTiet(manv, makc)
+                    soNgayCong = dbManager.selectSoNgayCong(makc)
+                    ngayCong = 0
+                    for kc in kycong_ct:
+                        duLieu = (kc[0],)
+                        for i in range(3, 4+soNgayCong):
+                            duLieu = duLieu + (kc[i],)
+                            if kc[i]=='X' or kc[i]=='+' or kc[i]=='P':
+                                ngayCong += 1
+                        duLieu = duLieu + (str(ngayCong),)
+                    kycong_table.insert("", END, values=duLieu)
+                    dbManager.closeConnection()
+                else:
+                    print("Kết nối thất bại!")
+
+            docDuLieu()
+
+            lb = Label(edit_frame, text="Chọn ngày công cần chỉnh sửa: ", font=("Helvetica", 10), foreground="red")
+            lb.grid(row=0, column=0, padx=5, pady=10)
+            values_ngay = []
+            for i in range(1, soNgayCong+1):
+                values_ngay += ["Day"+str(i)]
+            cb_ngay = ttk.Combobox(edit_frame, values= values_ngay, font=("Arial", 10))
+            cb_ngay.grid(row=0, column=1, padx=5, pady=10)
+
+            lb_sua = Label(edit_frame, text="Sửa thành: ", font=("Helvetica", 10), foreground="red")
+            lb_sua.grid(row=0, column=2, padx=15, pady=10)
+            value_sua = ["Nghỉ có phép (P)", "Đi làm đủ (X)", "Làm nửa ngày (+)"]
+            cb_sua = ttk.Combobox(edit_frame, values= value_sua, font=("Arial", 10))
+            cb_sua.grid(row=0, column=3, padx=15, pady=10)
+
+            def btncapnhat():
+                selected = kycong_table.focus()
+                kycong_table.item(selected, 'values')
+                ngay = cb_ngay.get()
+                sua = cb_sua.get()
+                if ngay=="" or sua=="":
+                    messagebox.showinfo("Thông báo", "Vui lòng chọn thông tin cập nhập!")
+                else:
+                    if sua=="Nghỉ có phép (P)":
+                        suaLai="P"
+                    elif sua=="Đi làm đủ (X)":
+                        suaLai="X"
+                    elif sua=="Làm nửa ngày (+)":
+                        suaLai="+"
+                    dbManager = database_manager.DatabaseManager()
+                    if dbManager.openConnection():
+                        dbManager.updateNgayCong(ngay, suaLai, makc, manv)
+                        dbManager.closeConnection()
+                    else:
+                        print("Kết nối thất bại!")
+                    kycong_table.delete(*kycong_table.get_children())
+                    docDuLieu()
+                    cb_ngay.set(' ')
+                    cb_sua.set(' ')
+
+            button_CapNhat = CTkButton(edit_frame, text="Cập nhật", corner_radius=30, border_width=2,
+                              border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 12), command=btncapnhat)
+            button_CapNhat.grid(row=0, column=4, padx=15, pady=10)
+            
     #button
     button_capnhat = CTkButton(info_frame, text="Cập nhật", corner_radius=30, border_width=2,
                                border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnCapNhat )
     button_capnhat.grid(row=8, column=1)
     button_xoa = CTkButton(info_frame, text="Xoá", corner_radius=30, border_width=2,
                            border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnXoa)
-    button_xoa.grid(row=8, column=0, padx=10, pady=30)
+    button_xoa.grid(row=8, column=0, padx=10, pady=20)
 
     button_lammoi = CTkButton(info_frame, text="Làm mới", corner_radius=30, border_width=2,
                                border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnLamMoi)
@@ -301,6 +433,10 @@ def QuanLyLayout(right_frame):
     button_xemanh = CTkButton(info_frame, text="Xem ảnh", corner_radius=30, border_width=2,
                               border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnXemAnh)
     button_xemanh.grid(row=9, column=1)
+
+    button_kycong = CTkButton(info_frame, text="Xem chi tiết kỳ công", corner_radius=30, border_width=2,
+                               border_color="#87CEFA", text_color="white", hover_color="#00BFFF", font=("Helvetica", 15), command=btnKyCong)
+    button_kycong.grid(row=10, column=0, columnspan=2, pady=15)
     
     
 
