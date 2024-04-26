@@ -7,7 +7,6 @@ import capCheck
 import numpy as np
 import DangKyGUI, QuanLyGUI,LichChamCongGUI, ThongKeGUI, ThongTinDiemDanh # import các giao diện
 
-
 def canGiuaCuaSo(window,width,height):
     window.resizable(width=False,height=False)
     screen_width=window.winfo_screenwidth()

@@ -380,7 +380,7 @@ GROUP BY
             cursor = self.con.cursor()
             cursor.execute(
                 """SELECT 
-    CAST((SUM(CASE WHEN ThoiGianVao IS NOT NULL AND TIME(ThoiGianVao) > '07:00:00' THEN 1 ELSE 0 END) * 100) / COUNT(*) AS SIGNED) AS late_percentage
+    CAST((SUM(CASE WHEN ThoiGianVao IS NOT NULL AND TIME(ThoiGianVao) > '07:15:00' THEN 1 ELSE 0 END) * 100) / COUNT(*) AS SIGNED) AS late_percentage
 FROM 
     CongNhanVien
 WHERE 

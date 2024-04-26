@@ -62,7 +62,7 @@ def DangKyLayout(right_frame):
                         count += 1
                     label_hinhAnh.configure(image=img3, width=360, height=360)
                     right_frame_dk.update()
-                    if (dem == 10):
+                    if (dem == 5):
                         break
 
             cap.release()

@@ -10,7 +10,7 @@ def loadDuLieu(table,listDiemDanh):
     dem=1
     for info in listDiemDanh:
         trangThai=""
-        if(info[5] > timedelta(hours=7, minutes=30)):
+        if(info[5] > timedelta(hours=7, minutes=15)):
             trangThai="Trễ"
         else: trangThai="Đúng Giờ"
 

@@ -51,33 +51,46 @@ def diemDanh(name):
     with open("QuanLyChamCong/diemDanh.csv","r+") as fi:
         myDataList=fi.readlines()
         nameList=[]
+        dateList=[]
+        toDay=datetime.now()
         for line in myDataList:
             entry=line.split(",")
-            nameList.append(entry[0])
-        if name not in nameList:
-            nowTime=datetime.now()
-            dateString=nowTime.strftime("%H:%M:%S")
-            fi.writelines(f"\n{name},{dateString}")
-            return 1, dateString
-        else: 
-            vitri=nameList.index(name)
-            check=myDataList[vitri].split(",")
-            if len(check) <3:
+            if entry[0]==name:
+                nameList.append(entry)
+                dateList.append(entry[1])
+        print(f"Danh sách {nameList}")
+        # đã điểm danh hôm nay
+        # check điểm danh
+        if (toDay.strftime("%d/%m/%Y") in dateList):
+            vitri=dateList.index(toDay.strftime("%d/%m/%Y"))
+            viTriTrongDB=myDataList.index(','.join(nameList[vitri]))
+            print(f"noidung: {nameList[vitri]}")
+            print(f"kichthuoc: {len(nameList[vitri])}")
+            print(f"ketqua: {(myDataList[viTriTrongDB])}")
+            # điểm danh lần 2
+            if( len(nameList[vitri])<4):
                 time_default="16:00:00"
                 time_default=datetime.strptime(time_default,"%H:%M:%S")
                 leaveTime=datetime.now()
-                dateString=leaveTime.strftime("%H:%M:%S")
-                if (leaveTime.time() > time_default.time()):
-                    myDataList[vitri]=myDataList[vitri].rstrip("\n")+","+dateString+"\n"
-                    # xóa toàn bộ nội dung và add lại nội dung mới
+                # tới lúc về
+                if(leaveTime.time() > time_default.time()):
+                    if(len(nameList[vitri]==3)):
+                        myDataList[viTriTrongDB]=myDataList[viTriTrongDB].rstrip("\n")+","+toDay.strftime("%H:%M:%S")+"\n"
+                    elif( len(nameList[vitri])==2):
+                        myDataList[viTriTrongDB]=myDataList[viTriTrongDB].rstrip("\n")+",13:00:00,"+toDay.strftime("%H:%M:%S")+"\n"
                     fi.seek(0)
                     fi.truncate()
-                    fi.writelines(myDataList)
-                    return 2, dateString
-                else: 
-                    return 0,"Chưa tới giờ điểm danh!!"
+                    fi.writelines(myDataList)    
+                    return 2, toDay.strftime("%H:%M:%S")
+                else:
+                    return 0,"Chưa tới giờ điểm danh!!" 
             else:
-                return 0,"Bạn đã điểm danh rồi!!"
+                return 0,"Bạn đã điểm danh rồi!!"        
+        else:
+            dateString=toDay.strftime("%H:%M:%S")
+            timeString=toDay.strftime("%d/%m/%Y")
+            fi.writelines(f"\n{name},{timeString},{dateString}")
+            return 1, dateString
 
 
 
