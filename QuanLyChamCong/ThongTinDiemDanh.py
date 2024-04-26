@@ -1,9 +1,20 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from datetime import timedelta
 from customtkinter import *
 import numpy as np
 import mysql.connector  
+import pandas as pd
+
+def canGiuaCuaSo(window,width,height):
+    window.resizable(width=False,height=False)
+    screen_width=window.winfo_screenwidth()
+    screen_height=window.winfo_screenheight()
+    x=(screen_width-width)//2
+    y=(screen_height-height)//2
+    window.geometry(f"{width}x{height}+{int(x)}+{int(y)}")
+
 def loadDuLieu(table,listDiemDanh):
     for item in table.get_children():
         table.delete(item)
@@ -30,7 +41,18 @@ def timKiemThongTin(table,listDiemDanh,text):
     loadDuLieu(table,kq)    
     pass
 
+def XuatFileExcel(table):
+    duongDan = filedialog.asksaveasfilename(defaultextension=".xlsx")
+    # Lấy các cột và dữ liệu từ TreeView
+    columns = table["columns"]
+    data = []
+    for item in table.get_children():
+        values = table.item(item, "values")
+        data.append(values)
 
+    df = pd.DataFrame(data, columns=columns)
+    df.to_excel(duongDan, index=False)
+    messagebox.showinfo("Thông báo","Xuất File Thành Công")
 
 def ThongTinDiemDanhLayout(right_frame):
     # load dữ liệu
@@ -51,6 +73,8 @@ def ThongTinDiemDanhLayout(right_frame):
 
     timKiem=CTkEntry(chucNang,font=("arial",12),fg_color="white",text_color="black",placeholder_text="Tìm kiếm thông tin nhân viên ...",bg_color="white",width=600,height=50)
     timKiem.pack(side="left",padx=50) 
+    xuatFile=CTkButton(chucNang,text="File Excel",fg_color="#4158D0",font=("arial",14),height=50,width=130,command=lambda: XuatFileExcel(table))
+    xuatFile.pack(side="right",padx=20)
     style=ttk.Style()
     style.configure("Treeview.Heading",rowheight=50, font=("Arial", 14)) 
     style.configure("Treeview", rowheight=30,font=("Arial",14))
