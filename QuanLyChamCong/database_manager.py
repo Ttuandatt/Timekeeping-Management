@@ -384,7 +384,7 @@ GROUP BY
 FROM 
     CongNhanVien
 WHERE 
-    MONTH(Ngay) = MONTH(NOW()) AND YEAR(Ngay) = YEAR(NOW());"""
+    MONTH(Ngay) = 4 AND YEAR(Ngay) = YEAR(NOW());"""#MONTH(NOW())
             )
             result = cursor.fetchall()
             cursor.close()
@@ -396,12 +396,10 @@ WHERE
         try:
             cursor = self.con.cursor()
             cursor.execute(
-                """      SELECT 
-    AVG(SoNgayCong) AS avg_work_days
-FROM 
-    KyCong
-WHERE 
-    MONTH(NgayTinhCong) = MONTH(NOW()) AND YEAR(NgayTinhCong) = YEAR(NOW());"""
+                """      SELECT SoNgayCong 
+FROM KyCong
+WHERE MONTH(NgayTinhCong) = 4 AND YEAR(NgayTinhCong) = YEAR(NOW());
+"""#MONTH(NOW())
             )
             result = cursor.fetchall()
             cursor.close()
@@ -418,7 +416,7 @@ WHERE
 FROM 
     CongNhanVien
 WHERE 
-    MONTH(Ngay) = MONTH(NOW()) AND YEAR(Ngay) = YEAR(NOW());"""
+    MONTH(Ngay) = 4  AND YEAR(Ngay) = YEAR(NOW());"""#MONTH(NOW())
             )
             result = cursor.fetchall()
             cursor.close()
@@ -435,7 +433,7 @@ WHERE
 FROM 
     congnhanvien 
 WHERE 
-    MONTH(congnhanvien.Ngay) = MONTH(CURRENT_DATE())"""
+    MONTH(congnhanvien.Ngay) = 4"""#MONTH(CURRENT_DATE())
             )
             result = cursor.fetchall()
             cursor.close()
@@ -449,13 +447,14 @@ WHERE
             cursor.execute(
                 """SELECT SUM(TIMESTAMPDIFF(SECOND, ThoiGianVao, ThoiGianRa)) AS total_work_seconds
 FROM CongNhanVien
-WHERE MONTH(Ngay) = MONTH(NOW());"""
+WHERE MONTH(Ngay) = 4;"""#MONTH(NOW());
             )
             result = cursor.fetchall()
             cursor.close()
             return result
         except Exception as e:
             return None
+
 
     def sumOvertimeWorkHour(self):
         try:
@@ -465,8 +464,8 @@ WHERE MONTH(Ngay) = MONTH(NOW());"""
                 FROM CongNhanVien CNV
                 INNER JOIN NhanVien NV ON CNV.MaNV = NV.MaNV
                 WHERE CNV.ThoiGianRa > '17:00:00' 
-                AND MONTH(CNV.Ngay) = MONTH(NOW());
-                """
+                AND MONTH(CNV.Ngay) = 4;
+                """#MONTH(NOW())
             )
             result = cursor.fetchall()
             cursor.close()

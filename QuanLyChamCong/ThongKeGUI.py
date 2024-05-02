@@ -173,6 +173,8 @@ def giocongtrungbinh():
     dbManager = database_manager.DatabaseManager()
     if dbManager.openConnection():
         dulieu = dbManager.countNhanVien()
+        print("Kết quả count:")
+        print(dulieu)
         if dulieu != None:
             total_employee = dulieu[0][0]
         else:
@@ -209,19 +211,21 @@ def giocongOT():
     dbManager = database_manager.DatabaseManager()
     if dbManager.openConnection():
         dulieu = dbManager.sumOvertimeWorkHour()
-        if dulieu is not None:
-            time_data = dulieu[0][0]
-            time_data=str(time_data)
-            if time_data is not None:
+        if dulieu is not None and dulieu[0][0] is not None: # Kiểm tra dulieu và dulieu[0][0] không phải là None
+            time_data = str(dulieu[0][0])
+            print("Từ OT")
+            print(time_data)
+            try:
                 time_data = datetime.strptime(time_data, "%H:%M:%S")
                 total_overtime_hours = (
                     time_data.hour + (time_data.minute / 60) + (time_data.second / 3600)
                 )
-            else:
+            except ValueError as e:
+                print(f"Lỗi khi chuyển đổi giá trị {time_data}: {e}")
                 total_overtime_hours = 0
         else:
-            total_overtime_hours = None
-        return round(total_overtime_hours,2)
+            total_overtime_hours = 0
+        return round(total_overtime_hours, 2)
     else:
         return None
 
