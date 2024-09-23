@@ -23,6 +23,5 @@
    ![image](https://github.com/user-attachments/assets/4456a7c1-afed-4878-81ce-ab7a2cc599ea)
    - Statistic:  
    ![image](https://github.com/user-attachments/assets/7c4da20a-3335-4bac-871d-18688daa672f)
-   - Roll call:
-   ![image](https://github.com/user-attachments/assets/c4c3f102-4400-4c6e-aab7-b3f385ce5532)
+
 
